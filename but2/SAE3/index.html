@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+
+<head>
+  <meta charset="UTF-8">
+    <title>Mon site web pour le portfolio</title>
+
+    <!-- Feuille de style principale -->
+    <link rel="stylesheet" href="SAE3.css">
+
+    <!-- Import des polices Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Marathi:ital@0;1&display=swap" rel="stylesheet">
+</head>
+
+
+</head>
+<link href="https://fonts.googleapis.com/css2?family=Vintage+Goods&display=swap" rel="stylesheet">
+
+<body>
+
+  <div class="header">Projet 1 (SAE3) :voltmètre numérique à affichage sur STM32 (Semestre 3)</div>
+
+ 
+  <table>
+  <tr>
+    <td colspan="4">
+      <p class="objective"></p>
+      <p>
+        Lors du semestre 3, j'ai conçu un voltmètre numérique permettant de mesurer des tensions continues comprises entre 0 et 14 V.
+        L'objectif était de créer un dispositif simple et compact, capable de lire et d'afficher la tension mesurée.
+        Ce projet m’a permis de renforcer mes compétences en électronique (analogique et numérique), en programmation de 
+        microcontrôleurs, ainsi qu’en mise en place du protocole de communication 
+        <a href="https://ressources.labomedia.org/spi_documentation_1">SPI (Serial Peripheral Interface)</a>. 
+        Il m’a également appris à faire preuve de rigueur, d’autonomie et de capacités d’analyse dans la résolution de problèmes techniques.<br><br>
+        
+        <strong>Fonctionnement du système :</strong><br>
+        Le système utilise le convertisseur analogique-numérique MCP3201, qui transforme la tension mesurée en une valeur binaire. 
+        Cette information est ensuite envoyée à un microcontrôleur via l’interface SPI pour être exploitée. 
+        Deux versions du système ont été développées :<br><br>
+        
+        <strong>Version 1 :</strong> Utilisation de l'ATtiny85, qui reçoit les données et pilote des LEDs en fonction de la tension mesurée.<br>
+        <strong>Version 2 :</strong> Remplacement de l’ATtiny85 par une carte STM32, qui convertit les données binaires en tension afin d’afficher la valeur mesurée sur un écran.<br><br>
+        
+        <strong>Pour ce faire, plusieurs tâches ont été réalisées :</strong><br>
+        La conception de la carte pour programmer l’ATtiny85, 
+        étude du convertisseur MCP3201 et de son fonctionnement, 
+        programmation de l’ATtiny85 pour lire les données,  
+        réécriture du protocole SPI sur STM32, 
+        conversion des données binaires en valeurs de tension réelle, 
+        et en fin affichage de la tension mesurée sur un écran.<br> <br>
+        <a href="doc/Presentation CAN-S3-2024.pdf">Cahier de charge</a>
+        
+      </p>
+    </td>
+  </tr>
+
+       
+
+    <tr>
+      <th>Tâches réalisées</th>
+      <th>Ressources utilisées</th>
+      <th>Traces</th>
+      <th>Autoévaluation</th>
+    </tr>
+
+    <tr>
+      <td>
+        <p><strong>Concevoir une carte pour programmer le microcontrôleur ATtiny85</strong><br>
+        → <strong>Objectif :</strong> Cette carte permettra de programmer et exploiter le microcontrôleur ATtiny85.
+                     Elle  offre la possibilité de basculer facilement entre deux modes : un mode programmation pour charger le code, et un
+                      mode utilisation pour faire fonctionner le microcontrôleur dans son circuit final. J’ai intégré deux configurations
+                       distinctes, activables à l’aide de cavaliers (petits connecteurs amovibles).<br></p>
+       
+  <td class="resources">
+                <p><b>Matérielles :</b> PC</p>
+                <p><b>Logiciel :</b> Kicad<p></p></p>
+                <p><b>Documents :</b> <p> Data de l'ATtiny85.</p> </p>
+                <p><b>Pédagogique:</b> <p>M. Duvanaud</p></p>
+            </td>
+            <td>
+                <p>
+                    <a href="doc/Atmel-2586-AVR-8-bit-Microcontroller-ATtiny25-ATtiny45-ATtiny85_Datasheet.pdf">Datascheet</a>
+                </p>
+                <p>
+                    <a href="image/schema_sur_kicad.png">Schéma réalisé</a>
+                </p>
+                <p>
+                    <a href="image/routage.png">Routage du PCB</a>
+                </p> 
+                <p>
+                    <a href="image/potp2.jpg">Carte</a>
+                </p>
+                <p>
+                    <a href="image/Ptot.jpg">Soudure</a>
+                </p>
+
+
+            </td>
+            <td>
+                <p>Cette partie du projet a été réussie avec succès. La carte conçue répond parfaitement aux 
+                    attentes : elle permet de programmer et utiliser l’ATtiny85 de manière fiable et sécurisée. Grâce au double mode 
+                    (programmation / utilisation), j’ai pu basculer facilement entre le développement et l’exploitation du microcontrôleur,
+                     sans risque de conflit d’alimentation ni d’erreurs de câblage.</p>
+            </td>
+        </tr>
+    </tr>
+
+
+    <tr>
+            <td>
+                <p><b>Etudier le convertisseur analogique-numérique MCP3201:</b></p>
+                <p>Le MCP3201 est un convertisseur analogique-numérique (CAN) à 12 bits qui nous permettra de mesurer une tension analogique 
+                    appliquée à son entrée (Vin), puis de la convertir en une valeur binaire. 
+                 
+                      Ce composant utilise une liaison SPI  pour communiquer avec un microcontrôleur, comme l’ATTiny85.<br><br>
+                      <b>Fonctionnement : </b>
+                      Dès que le signal CS passe à l’état bas, le MCP3201 commence un cycle de communication. Il envoie 15 bits via le pin <b>Dout</b>.
+                      Chaque bit est synchronisé avec une impulsion d’horloge. Le microcontrôleur génèrera donc 15 impulsions, et à chaque impulsions,
+                      un bit est transmis. <br>Les 2 premiers bits sont des bits de démarrage/échantillonnage,
+                      suivis d’un bit null (zéro), puis des 12 bits utiles représentant la valeur convertie de la tension analogique. </p>
+            </td>
+
+            <td class="resources">
+                <p><b>Matérielles :</b> <p> </p> <p>Le MCP3201</p> 
+                <p><b>Documents :</b> <p>  <p><a href="doc/MCP3201.PDF">Datascheet du MCP3201</a></p></p> </p>
+
+
+           
+                <p><b>Pédagogique:</b> <br> <p>Cours de INFO3: <a href="doc/1_ESEInfo3_CM1_UPDago-49-58.pdf" ><br>Protocole SPI</a></p>
+            </p>
+            </td>
+            <td>
+
+                <p>
+                    <a href="image/CommSPI.PNG">Fonctionnement du protocole SPI</a>
+                </p>
+                <p>
+                    <a href="image/conversion.PNG">Conversion de la tension en données binaires</a>
+                </p> 
+
+
+            </td>
+<td>
+    <p>J’ai compris le principe de fonctionnement du <strong>MCP3201</strong>, 
+        notamment la manière dont il communique via l'interface <strong>SPI</strong>. Cela m’a permis de mieux appréhender les échanges 
+        de données entre le <strong>MCP3201</strong> et un microcontrôleur comme l’<strong>ATTiny85</strong>.</p>
+
+    <p>En réalisant cette étude, j’ai appris à :<br>
+    
+        Identifier les différentes phases du protocole <strong>SPI;</strong>
+        à analyser en détail les <strong>15 bits</strong> transmis et enfin à
+        comprendre comment une <strong>tension analogique</strong> est convertie et transmise numériquement.</p>
+  
+
+  
+</td>
+
+        </tr>
+
+
+
+  <tr>
+            <td>
+                <p><b> Programmer l’ATtiny85 pour lire les données du MCP3201 via la protocole de communication <a href="https://ressources.labomedia.org/spi_documentation_1">SPI </a></b></p>
+
+                <p><b> → Objectif : </b>Développer un programme pour le microcontrôleur ATtiny85 afin d’acquérir et d’exploiter la tension
+                   numérisée fournie par le  MCP3201. <br><br>
+                    <strong>Fonctionnement : </strong> Le programme commence par 
+                     initialiser les broches à un état stable, puis entre dans une boucle où il active le MCP3201 (CS niveau bas). Ensuite il 
+                     lit 15 bits un à un via 
+                     MISO, synchronisés par des impulsions d’horloge, et stock ainsi ces données numériques dans une variable. En fonction
+                      de la valeur obtenue, le programme allume la LED verte, rouge ou les deux pour indiquer trois plages de tension.</p>
+              
+            </td>
+            <td class="resources">
+                <p><b>Matérielles :</b> 
+                    <p>Ordinateur de l’IUT</p>
+                    <p>Carte Arduino pour programmer ATTiny85</p>
+                <p><b>Logiciel :</b><br> Arduino IDE</p>
+                <p><b>Pédagogique:</b><br> M DUVANAUD et les leçons de Info3</p>
+            </td>
+            <td>
+                <p>
+                    <a href="doc/code complete.TXT">Code complete</a>
+                </p>
+                <p>
+                    <a href="image/schéma.jpg">Schéma</a>
+                </p>
+                <p>
+                    <a href="image/SPI_stm.png">Visualisation (CS et horloge)</a>
+                </p>
+                <p><a href="doc/video.mp4">Une video de simulation</a></p>
+            </td>
+            <td>
+                <p>J’ai rencontré un problème bloquant avec l’antivirus de mon ordinateur qui empêchait l’utilisation d’avrdude pour programmer l’ATtiny85. 
+                  Pour contourner cela, j’ai utilisé un Arduino Uno comme programmateur. Cette difficulté m’a appris à ne pas rester bloqué 
+                  face à un problème logiciel, et à chercher des solutions pratiques avec les moyens disponibles. Elle m’a aussi permis de 
+                  mieux comprendre le processus de programmation d’un microcontrôleur et les différentes méthodes pour y parvenir.  Ce travail m’a permis de maîtriser la communication SPI, la lecture bit à bit, et le
+                       pilotage conditionnel de composants électroniques simples</p>
+            </td>
+        </tr>
+
+
+        <tr>
+            <td>
+                <p><b> Mettre en œuvre la communication entre l’ATTiny85 et le MCP3201 pour mesurer une tension et piloter des LEDs</b></p>
+
+                <p> <b>Objectif: </b> Après avoir étudié le fonctionnement du MCP3201 et développé le code permettant sa communication avec le
+                     microcontrôleur ATTiny85 via l’interface SPI, je passe maintenant à l’étape de mise en œuvre pratique. Il s’agit de connecter
+                    physiquement les deux composants afin de mesurer une tension analogique et d’allumer les LEDs en fonction de
+                     la valeur mesurée.</p>
+                
+            </td>
+            <td class="resources">
+                <p><b>Matérielles :</b> 
+                    <p>Ordinateur de l’IUT</p>
+                <p><b>Pédagogique:</b><br> M DUVANAUD et les leçons de Info3</p>
+            </td>
+            <td>
+                <p>
+                    <a href="image/schéma_ele.png">Schéma électronique</a>
+                </p>
+                <p>
+                   <a href="image/donne.png">Visualisation des sur osciloscope</a>
+                </p>
+                <p>
+                    <a href="doc/vi2.mp4">Vidéo de démostration</a>
+                </p>
+                
+            </td>
+            <td>
+                <p>Ce travail, bien que simple, m’a permis de renforcer ma maîtrise de la communication SPI, de la lecture bit à bit et du 
+                  pilotage conditionnel de LEDs. Sans difficulté majeure, il m’a surtout appris l’importance de la rigueur, même dans les
+                   montages les plus basiques.</p>
+            </td>
+        </tr>
+
+
+
+        <tr>
+            <td>
+                <p><b>Remplacer de l’ATtiny par une carte STM32 pour permettre l’affichage de la tension sur écran.. </b></p>
+
+                <p> <b>Objectif: </b>J’ai remplacé le microcontrôleur ATtiny par une carte STM32 afin de permettre l’affichage de la tension mesurée sur un 
+                    écran. Pour cela, j’ai entièrement réécrit le protocole de communication SPI entre le convertisseur analogique-numérique MCP3201 et la 
+                    STM32. Cette dernière reçoit les données numériques envoyées par le MCP3201 via l’interface SPI, les convertit en une valeur de tension
+                     réelle, puis les affiche sur un écran.</p>
+                
+            </td>
+            <td class="resources">
+                <p><b>Matérielles :</b> 
+                    <p>Ordinateur de l’IUT</p>
+                    <p>La STM32</p>
+                <p><b>Logiciel :</b><br>STM32CubeMx<br>STM32CubeIDE</p>
+
+                <p><b>Pédagogique:</b><br> M HAMDOUN</p>
+            </td>
+            <td>
+                <p>
+                    <a href="image/scheStm.PNG">Schéma</a>
+                </p>
+
+                <p>
+                    <a href="doc/SAE3_MANU_code.zip">Projet complete</a>
+                </p>
+               
+               
+            </td>
+            <td>
+                <p>Pour cette partie, je me suis fortement appuyé sur le travail réalisé avec l’ATtiny85, ce qui m’a permis de réécrire plus
+                   rapidement le protocole SPI pour la STM32. Mon expérience précédente m’a aidé à structurer le code et à assurer une lecture
+                    fiable des données envoyées par le MCP3201. L’affichage des tensions sur écran a été pris en charge par mon binôme, ce qui 
+                    nous a permis de bien répartir les tâches et de progresser efficacement en équipe.</p>
+            </td>
+        </tr>
+
+
+  </table>
+
+  <div class="footer">ANALYSE PERSONNELLE</div>
+
+  <table>
+    <tr>
+      <td colspan="4">
+        <p>
+ La réalisation de ce projet de voltmètre a été une étape marquante dans mon parcours en BUT GEII. Elle m’a permis
+                     de consolider mes acquis en électronique tout en développant une approche plus rigoureuse de la conception de systèmes
+                      embarqués. Sur le plan technique, j’ai particulièrement apprécié la complexité et la cohérence globale du projet. <BR>
+                      L’utilisation du MCP3201 avec une communication SPI fiable, associée à la programmation de l’ATTiny85 et à l’intégration 
+                      de LEDs comme interface utilisateur, m’a permis de renforcer mes compétences en électronique numérique et en traitement
+                       de données.<br> Le calibrage du diviseur de tension, la mise en place d'une protection contre les surtensions, et l’analyse
+                        des signaux avec l’oscilloscope m’ont montré l’importance des tests expérimentaux et de la validation dans la 
+                        conception de circuits fonctionnels. Au-delà de la technique, ce projet m’a sensibilisé à l’importance de la simplicité
+                         d’utilisation pour l’utilisateur final. <br>Transformer une mesure abstraite en une information visuelle claire grâce à un
+                          affichage par LED a été un vrai défi d’ergonomie que j’ai pris plaisir à relever. Enfin, ce travail a renforcé ma
+                           capacité à résoudre des problèmes concrets, à structurer mes idées, à documenter mes choix techniques, et à 
+                           collaborer efficacement.<br> C’est une expérience très formatrice qui m’a conforté dans mon intérêt pour l’électronique
+                            embarquée et les systèmes de mesure.<br><br>
+                            
+                           <strong>Compte rendu du</strong> <a href ="doc/SAE_Compte_Rendu_BoubacarDiallo.pdf" >Version 1</a><br>
+                           <strong>Compte rendu du</strong> <a href ="doc/Compte rendu du projet  STYLO VOLTMETRE NUMERIQUE A AFFICHAGE DEPORTE.pdf" >Version 2</a>
+                      </p>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

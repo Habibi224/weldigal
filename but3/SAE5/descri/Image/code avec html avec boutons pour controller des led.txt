@@ -1,0 +1,64 @@
+#include <WiFi.h>
+#include <WebServer.h>
+
+// Nom et mot de passe du hotspot
+const char* ssid = "Bouba";
+const char* password = "Diallo12345";
+
+// Serveur web sur le port 80
+WebServer server(80);
+
+// Broches des LEDs
+const int ledRouge = 36;
+const int ledVerte = 39;
+
+void handleRoot() {
+  String page = "<!DOCTYPE html><html><head><meta charset='utf-8'><title>LED ESP32</title></head><body>";
+  page += "<h1>Contrôle LEDs 🚦</h1>";
+  page += "<p><a href='/rougeOn'><button>Allumer Rouge 🔴</button></a>";
+  page += "<a href='/rougeOff'><button>Éteindre Rouge ⚫</button></a></p>";
+  page += "<p><a href='/verteOn'><button>Allumer Vert 🟢</button></a>";
+  page += "<a href='/verteOff'><button>Éteindre Vert ⚫</button></a></p>";
+  page += "</body></html>";
+  server.send(200, "text/html", page);
+}
+
+void setup() {
+  // Configurer les LEDs en sortie
+  pinMode(ledRouge, OUTPUT);
+  pinMode(ledVerte, OUTPUT);
+
+  // Stabiliser la puce avant d’activer le WiFi
+  delay(1500);
+
+  // Mode point d'accès
+  WiFi.mode(WIFI_AP);
+  WiFi.softAP(ssid, password);
+
+  // Routes
+  server.on("/", handleRoot);
+
+  server.on("/rougeOn", []() {
+    digitalWrite(ledRouge, HIGH);
+    handleRoot();
+  });
+  server.on("/rougeOff", []() {
+    digitalWrite(ledRouge, LOW);
+    handleRoot();
+  });
+  server.on("/verteOn", []() {
+    digitalWrite(ledVerte, HIGH);
+    handleRoot();
+  });
+  server.on("/verteOff", []() {
+    digitalWrite(ledVerte, LOW);
+    handleRoot();
+  });
+
+  // Lancer le serveur
+  server.begin();
+}
+
+void loop() {
+  server.handleClient(); // Gérer les requêtes HTTP
+}

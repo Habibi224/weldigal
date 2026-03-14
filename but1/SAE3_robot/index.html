@@ -1,0 +1,251 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=ansi">
+    <meta name="generator" content="PSPad editor, www.pspad.com">
+    <title>Robot</title>
+    <style>
+        .niv1 {
+            background-color: #EDF5FD;
+            font-size: 32px;
+            text-align: center;
+            margin-left: 10%;
+            margin-right: 60%;
+            border: groove;
+        }
+
+        .niv2 {
+            background-color: #EDF5FD;
+            font-size: 28px;
+            text-align: center;
+            margin-left: 30%;
+            margin-right: 40%;
+            border: groove;
+        }
+
+        .niv3 {
+            background-color: #EDF5FD;
+            font-size: 20px;
+            text-align: center;
+            margin-left: 35%;
+            margin-right: 30%;
+            border: groove;
+        }
+
+        .ligne {
+            padding-top: 30px;
+            border: solid;
+        }
+
+        p {
+            text-align: justify;
+            font-size: 24px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        td, th {
+            border: solid 1px #000;
+            padding: 8px;
+        }
+
+        th {
+            background-color: rgb(45, 209, 250);
+            text-align: center;
+        }
+
+        .header {
+            background-color: #FFCC33;
+            font-size: 28px;
+            color: rgb(233, 55, 55);
+            text-align: center;
+        }
+
+        .sub-header {
+            background-color: #EDF5FD;
+            font-size: 28px;
+            color: #da1e1e;
+            text-align: center;
+        }
+
+        .highlight {
+            background-color: #EDF5FD;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <tr>
+            <td colspan="5" class="header">Robot</td>
+        </tr>
+        <tr>
+            <td colspan="5">
+                <p style="color:#000000;">L'objectif est de créer un robot suiveur de ligne pour participer à un challenge interclasse. Ce robot fonctionnera sans programmation informatique afin de nous familiariser avec les fonctions d'électronique analogique de base utilisées dans les systèmes embarqués.
+
+                    Le robot devra suivre une ligne matérialisée par un ruban blanc sur la moquette bleue de la salle GE210. Pour ce challenge, deux épreuves seront organisées : une épreuve de vitesse sur une ligne droite et une épreuve sur une ligne courbe.</p>
+            </td>
+        </tr>
+        <tr>
+            <th width="25%">Tâches réalisées</th>
+            <th width="25%">Ressources utilisées</th>
+            <th width="25%">Traces</th>
+            <th width="25%">Autoévaluation</th>
+        </tr>
+        <tr>
+            <td>
+                <p><b>Vérifier de l'état du matériel</b><br>
+                <b>Objectif :</b> Définir un rapport cyclique et une fréquence nominale pour les moteurs et définir un sens de rotation des moteurs.</p>
+            </td>
+            <td>
+                <p>Les sujets du SAE vérifier du premier semestre, oscilloscope, alimentation stabilisée, le GBF et les ordinateurs de l'IUT.</p>
+            </td>
+            <td>
+                <p><a href="image/Vérifuication des moteurs.jpg">Verification</a></p>
+            </td>
+            <td>
+                <p>Bilan.<br>Ais-je atteint l'objectif de cette tâche ?</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><b>Concevoir le superviseur de tension de la batterie</b></p>
+                <p>Le superviseur de tension de la batterie est conçu pour surveiller la tension de la batterie. Si la tension chute en dessous de 11,5 volts, il interrompt l’alimentation pour empêcher le moteur de démarrer. Cependant, une fois que le robot a commencé à se déplacer, le superviseur permet au robot de continuer à fonctionner même si la tension tombe en dessous du seuil de 11,5 volts.</p>
+            </td>
+            <td>
+                <p><b>Matérielles :</b></p>
+                <ul>
+                    <li>Ordinateur de l'IUT</li>
+                    <li>Alimentation stabilisée</li>
+                    <li>Oscilloscope</li>
+                    <li>Câbles</li>
+                    <li>Fer à souder</li>
+                    <li>Composants électroniques</li>
+                </ul>
+                <p><b>Documents :</b></p>
+                <ul>
+                    <li><a href="doc/Schéma du superviseur.png">Schéma du supérviseur</a></li>
+               
+                <p><b>Pédagogiques :</b></p>
+                <ul>
+                    
+                    <li>TP Electronique (M. Cordeau)</li>
+                </ul>
+                <p>Humaines :</p>
+                <ul>
+                    <li>M. Lucas</li>
+                </ul>
+                
+            </td>
+            <td>
+                <p><a href="doc/Après soudu.png">Après avoir soudé les composants</a></p>
+                <p><a href="doc/Super.png">Objectif</a></p>
+            </td>
+            <td>
+                <p>.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><b>Concevoir l'astable (PWM)</b></p>
+                <p>J'ai décidé que sur la ligne droite, le robot roule avec un rapport cyclique de 100% et pour tourner, le rapport cyclique de la roue concernée diminue à 20% tandis que l'autre continue à 100%.</p>
+            </td>
+            <td>
+                <p>Matérielles :</p>
+                <ul>
+                    <li>Ordinateur de l'IUT</li>
+                    <li>Alimentation stabilisée</li>
+                    <li>Oscilloscope</li>
+                    <li>Câbles</li>
+                    <li>Fer à souder</li>
+                    <li>Composants électroniques</li>
+                </ul>
+                <p><b>Internet</b></p>
+                <p><b>Logiciel :</b></p>
+                <ul>
+                    <li>LtSpice; pour faire la simulation</li>
+                   
+                <p><b>Pédagogiques :</b></p>
+                <ul>
+                
+                    <li>TP Electronique (M. Cordeau)</li>
+                </ul>
+                <p>Humaines :</p>
+                <ul>
+                    <li>M. Lucas</li>
+                </ul>
+            </td>
+            <td>
+              <p><a href="doc/Schéma de l'astable.png">Schéma trouver sur Internet</a></p>  
+              <p><a href="image/astable.jpg">Câblage</a></p>
+                <p><a href="image/la tension de sortie .jpg">La tension de sortie variable en tournant le potentiomètre</a></p>
+            </td>
+            <td>
+                <p>J'ai fait des recherches sur internet et j'ai trouvé plusieurs schémas. J'ai ensuite filtré
+                   les résultats pour en sélectionner les plus pertinents. Pour acquérir cette connaissance, 
+                   j'ai décidé de reproduire le schéma. Cependant, au lieu de le réaliser physiquement sur une
+                    breadboard, j'ai opté pour une simulation avec LtSpice. Cette décision visait à éviter une 
+                    perte de temps potentielle, compte tenu de la complexité de la tâche. En simulation, j'ai 
+                    utilisé deux résistances en série au lieu d'un potentiomètre (résistance variable). Personnellement,
+                     je n'aurais eu aucun mal à réaliser cela physiquement sur une breadboard, car le résultat de la simulation 
+                     correspondait à ce qui était attendu. De plus, la réalisation des câblages est devenue une compétence 
+                     acquise pour moi. </p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p><b>Faire analyse fonctionnelle du OPB704</b></p>
+            </td>
+            <td>
+                <p><b>Matérielles :</b></p>
+                <ul>
+                    <li>Ordinateur de l'IUT</li>
+                    <li>Alimentation stabilisée</li>
+                    <li>Oscilloscope</li>
+                    <li>Câbles</li>
+                    <li>Fer à souder</li>
+                    <li>Composants électroniques( résistances)</li>
+                </ul>
+                <p><b>Documents :</b></p>
+                <ul>
+                    <li><a href="doc/Datascheet 0°B704.pdf">Datascheet du OPB704</a></li>
+                </ul>
+             
+                <p>Pédagogiques :</p>
+                <ul>
+                    <li>Cours d'électronique pour calculer less résistances</li>
+                    <li>TP Electronique (M. Cordeau)</li>
+                </ul>
+                <p>Humaines :</p>
+                <ul>
+                    <li>M. Lucas</li>
+                </ul>
+            </td>
+            <td>
+                <p><a href="doc/Schéma sur papier.pdf">Schéma du fonctionnement sur papier</a></p> <p><a href="image/Cablage du  OPB704.jpg">Cablage</a></p>
+            </td>
+            <td>
+                <p>Au début, j'ai rencontré des difficultés car je ne savais pas par où commencer, même si
+                   j'avais accès à la documentation du fabricant. N'étant pas habitué à lire ce type de
+                    documents, cela m'a pris beaucoup de temps, un temps précieux. J'ai alors décidé de
+                     consulter mon fidèle ami "Google". Comme le dit souvent M. Lucas, il suffit de poser la
+                      bonne question. J'ai trouvé la datasheet du composant et, après plusieurs heures, j'ai 
+                      finalement pu tester l'un des capteurs. Cette expérience m'a appris qu'il est toujours essentiel de consulter la documentation du fabricant pour comprendre le fonctionnement d'
+                      un nouveau composant. Si j'avais commencé par cela, j'aurais probablement économisé beaucoup de temps.</p>
+            </td>
+
+        </tr>
+        <tr>
+            <td colspan="5" class="sub-header">ANALYSE PERSONNELLE</td>
+        </tr>
+        <tr>
+            <td colspan="5">
+                <p>Analyse personnelle et liste des compétences (savoirs théoriques, savoir-faire concrets, savoir-être, plus référentiel GEII) mises en œuvre lors de cette mission.</p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

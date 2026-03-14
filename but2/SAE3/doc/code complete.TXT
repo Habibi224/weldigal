@@ -1,0 +1,66 @@
+#include <avr/io.h>   // Bibliothèque pour manipuler les registres AVR
+#include <util/delay.h> // Bibliothèque pour les délais
+
+int main(void) {
+    // Configuration des broches
+    DDRB |= (1 << DDB0); // PB0 - CS (Chip Select) en sortie
+    DDRB |= (1 << DDB2); // PB2 - Horloge (CLK) en sortie
+    DDRB &= ~(1 << DDB1); // PB1 - MISO (entrée des données)
+    DDRB |= (1 << DDB3); // PB3 - LED VERTE
+    DDRB |= (1 << DDB4); // PB4 - JAUNE
+
+    // Initialisation des sorties
+    PORTB |= (1 << PORTB0); // CS initialisé à l'état haut
+    PORTB |= (1 << PORTB2); // Horloge initialisée à l'état bas
+    PORTB &= ~(1 << PORTB3); // LED PB3 éteinte
+    PORTB &= ~(1 << PORTB4); // LED PB4 éteinte
+
+    while (1) {
+        uint16_t donne_numerique = 0; // Variable pour stocker les données binaires
+
+        // Étape 1 : Mettre CS à l'état haut et Horloge à l'état bas
+        PORTB |= (1 << PORTB0); // Mettre PB0 (CS) à l'état haut
+        PORTB &= ~(1 << PORTB2); // Mettre PB2 (Horloge) à l'état bas
+        _delay_ms(10);          // Attendre 10 ms
+
+        // Étape 2 : Mettre CS à l'état bas
+        PORTB &= ~(1 << PORTB0); // Mettre PB0 (CS) à l'état bas
+        // Faire 15 impulsions
+        for (int i = 0; i < 15; i++) {
+            PORTB &= ~(1 << PORTB2); // Mettre PB2 (Horloge) à l'état bas
+            _delay_us(60);           // Attendre 60 µs
+
+            // Lire un bit à partir de PB1 (MISO) et l'ajouter dans `donne_numerique`
+            donne_numerique = (donne_numerique << 1);
+            if (PINB & (1 << PINB1)) {
+                donne_numerique |= 1; // Ajouter cette valeur
+            }
+
+            PORTB |= (1 << PORTB2);  // Mettre PB2 (Horloge) à l'état haut
+            _delay_us(60);           // Attendre 60 µs
+        }
+
+        PORTB |= (1 << PORTB0); // CS état haut
+
+        // Éteindre les LEDs par défaut (initialement)
+        PORTB &= ~(1 << PORTB3); // Éteindre LED sur PB3
+        PORTB &= ~(1 << PORTB4); // Éteindre LED sur PB4
+
+        // Allumer les LEDs en fonction des valeurs binaires
+        if (donne_numerique <= 0b000011001100110) // Correspond à 2V
+        {
+            PORTB |= (1 << PORTB4); // Allumer LED sur PB4
+        } 
+        else if (donne_numerique > 0b000011001100110 && donne_numerique < 0b000110011001100) // Correspond à entre 0V et 4V
+        {
+            PORTB |= (1 << PORTB3); // Allumer LED sur PB3
+        } 
+        else if (donne_numerique > 0b000110011001100) // Correspond à une tension superieue à 4V
+        {
+            PORTB |= (1 << PORTB3); // Allumer LED sur PB3
+            PORTB |= (1 << PORTB4); // Allumer LED sur PB4
+        }
+    }
+
+    return 0;
+}

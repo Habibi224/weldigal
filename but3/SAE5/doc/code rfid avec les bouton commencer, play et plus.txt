@@ -1,0 +1,439 @@
+#include <SPI.h>
+#include <MFRC522.h>
+#include <WiFi.h>
+#include <WebServer.h>
+
+
+// ---------- RFID ----------
+#define SS_PIN   5
+#define RST_PIN  33
+MFRC522 rfid(SS_PIN, RST_PIN);
+bool rfidActive = false;   // état du RFID
+String competitionName = "";
+#define LED_RFID 2        // LED d'état RFID
+
+
+const char* ssid = "wifi_de_mon_pc";
+const char* password = "AZERTYXSZEDR552";
+
+WebServer server(80);
+
+// ---------- VARIABLES POUR STOCKER LES 2 BADGES ----------
+String robotA = "";
+String robotB = "";
+
+
+
+// Convertir l'UID en format texte
+String getUIDString() {
+  String uid = "";
+  for (byte i = 0; i < rfid.uid.size; i++) {
+    if (rfid.uid.uidByte[i] < 0x10) uid += "0";
+    uid += String(rfid.uid.uidByte[i], HEX);
+    if (i < rfid.uid.size - 1) uid += ":";
+  }
+  uid.toUpperCase();
+  return uid;
+}
+
+
+// Fonction pour gérer la page d’accueil
+void handleRoot() {
+  server.send(200, "text/html", R"rawliteral(
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Challenge robot GEII</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    body {
+      font-family: "Georgia", serif;
+      text-align: center;
+      background: #fff;
+      color: #000;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      font-size: 4rem;
+      font-style: italic;
+      margin-top: 60px;
+    }
+    .competition-input {
+      margin-top: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+    }
+    #competitionName {
+      width: 400px;
+      font-size: 1.3rem;
+      font-style: italic;
+      padding: 10px 15px;
+      border: 2px solid #000;
+      border-radius: 8px;
+      text-align: center;
+      outline: none;
+    }
+    #startButton {
+      font-size: 1.2rem;
+      font-style: italic;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background-color: #000;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #startButton:hover {
+      background-color: #333;
+    }
+
+    .robots {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 100px;
+      margin-top: 60px;
+    }
+    .robot {
+      text-align: center;
+    }
+    .robot-name {
+      font-size: 2rem;
+      font-weight: bold;
+      font-style: italic;
+      padding: 10px 20px;
+      border: 2px solid #000;
+      border-radius: 10px;
+      width: 200px;
+      margin: 0 auto;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .robot-name:hover {
+      background: #f0f0f0;
+    }
+
+    .icons {
+      margin-top: 10px;
+      font-size: 2rem;
+    }
+    .icons i {
+      display: block;
+      margin: 10px auto;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .icons i:hover {
+      transform: scale(1.2);
+    }
+
+    .vs {
+      font-size: 2rem;
+      font-style: italic;
+    }
+
+    .controls {
+      margin-top: 60px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+    }
+    .btn-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      cursor: pointer;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+    .btn-play {
+      background-color: white;
+      border: 3px solid black;
+      color: black;
+    }
+    .btn-play:hover {
+      background-color: #eee;
+      transform: scale(1.1);
+    }
+    .btn-pause {
+      background-color: black;
+      color: white;
+    }
+    .btn-pause:hover {
+      background-color: #333;
+      transform: scale(1.1);
+    }
+    .btn-plus {
+      background-color: white;
+      border: 3px solid black;
+      color: black;
+    }
+    .btn-plus:hover {
+      background-color: #eee;
+      transform: scale(1.1);
+    }
+
+    .history {
+      margin-top: 80px;
+      font-size: 2.5rem;
+      font-style: italic;
+      font-weight: bold;
+    }
+
+    table {
+      margin: 40px auto;
+      width: 90%;
+      border-collapse: collapse;
+      font-size: 1.2rem;
+      text-align: center;
+      font-style: italic;
+    }
+    th, td {
+      border: 1px solid #000;
+      padding: 10px;
+    }
+    thead {
+      background-color: #f7f7f7;
+      font-weight: bold;
+    }
+    th[colspan] {
+      font-size: 1.8rem;
+      font-style: italic;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>Challenge robot GEII</h1>
+
+<div class="competition-input">
+  <input type="text" id="competitionName" placeholder="Commencer en tapant le nom de la compétition">
+  <button id="startButton" onclick="startCompetition()">Commencer</button>
+</div>
+
+<div class="robots">
+  <div class="robot">
+    <div id="robotAName" class="robot-name" onclick="badgeRobot('A')">Badger</div>
+    <div class="icons">
+      <i class="fa-regular fa-clock"></i>
+      <i class="fa-solid fa-location-dot"></i>
+    </div>
+  </div>
+
+  <div class="vs">VS</div>
+
+  <div class="robot">
+    <div id="robotBName" class="robot-name" onclick="badgeRobot('B')">Badger</div>
+    <div class="icons">
+      <i class="fa-regular fa-clock"></i>
+      <i class="fa-solid fa-location-dot"></i>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="btn-circle btn-play"><i class="fa-solid fa-play"></i></button>
+  <button class="btn-circle btn-pause"><i class="fa-solid fa-pause"></i></button>
+<button class="btn-circle btn-plus" onclick="resetCompetition()">
+  <i class="fa-solid fa-plus"></i>
+</button>
+</div>
+
+<div class="history">Historique de la compétition</div>
+
+<table border="1" cellspacing="0" cellpadding="10">
+  <thead>
+    <tr><th colspan="3" id="tableTitle">Nom de la compétition</th></tr>
+ 
+
+    <tr>
+  <td>Nom des robots</td>
+  <td id="tableRobotA"></td>
+  <td id="tableRobotB"></td>
+</tr>
+
+
+  </thead>
+  <tbody>
+    <tr><td>Heure d’entrée</td><td></td><td></td></tr>
+    <tr><td>Heure de sortie</td><td></td><td></td></tr>
+    <tr><td>Temps de course brut</td><td></td><td></td></tr>
+    <tr><td>Temps de course net</td><td></td><td></td></tr>
+  </tbody>
+</table>
+
+<script>
+// Lecture du nom sur BADGE RFID
+function updateRobots() {
+  fetch("/robots")
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById("robotAName").textContent = data.A;
+      document.getElementById("robotBName").textContent = data.B;
+
+      document.getElementById("tableRobotA").textContent = data.A;
+      document.getElementById("tableRobotB").textContent = data.B;
+    });
+}
+
+setInterval(updateRobots, 500); // rafraîchissement auto
+
+function startCompetition() {
+  const comp = document.getElementById("competitionName").value;
+  if (comp.trim() === "") {
+    alert("Merci d'entrer le nom de la compétition !");
+    return;
+  }
+
+  fetch("/start?name=" + comp);
+  document.getElementById("tableTitle").textContent = comp;
+}
+
+document.querySelector(".btn-play").onclick = function() {
+  fetch("/stop");
+};
+
+function resetCompetition() {
+  fetch("/reset");
+
+  document.getElementById("robotAName").textContent = "Badger";
+  document.getElementById("robotBName").textContent = "Badger";
+
+  document.getElementById("tableRobotA").textContent = "";
+  document.getElementById("tableRobotB").textContent = "";
+
+  document.getElementById("competitionName").value = "";
+  document.getElementById("tableTitle").textContent = "Nom de la compétition";
+}
+
+
+</script>
+
+</body>
+</html>
+  )rawliteral");
+}
+
+
+
+void handleRobots() {
+ 
+
+  String json = "{\"A\":\"" + (robotA == "" ? "Badger" : robotA) +
+                "\", \"B\":\"" + (robotB == "" ? "Badger" : robotB) + "\"}";
+server.send(200, "application/json", json);
+
+
+}
+
+
+void setup() {
+    Serial.begin(9600);
+
+  delay(1000);
+
+  pinMode(LED_RFID, OUTPUT);
+  digitalWrite(LED_RFID, LOW);
+
+
+
+  // RFID
+  SPI.begin(18, 19, 23, SS_PIN);
+  rfid.PCD_Init();
+
+
+ // WIFI
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) delay(500);
+
+  server.on("/", handleRoot);
+  server.on("/robots", handleRobots);
+
+
+  server.on("/start", []() {
+  competitionName = server.arg("name");
+  rfidActive = true;
+  robotA = "";
+  robotB = "";
+  digitalWrite(LED_RFID, HIGH);
+  server.send(200, "text/plain", "STARTED");
+});
+
+server.on("/stop", []() {
+  rfidActive = false;
+  digitalWrite(LED_RFID, LOW);
+  server.send(200, "text/plain", "STOPPED");
+});
+
+
+server.on("/reset", []() {
+  robotA = "";
+  robotB = "";
+  competitionName = "";
+
+  rfidActive = false;
+  digitalWrite(LED_RFID, LOW);
+
+  server.send(200, "text/plain", "RESET");
+});
+
+  // Démarrage du serveur Web
+  server.begin();
+}
+
+void loop() {
+  server.handleClient();
+
+// ---- RFID : nouvelle carte ? ----
+// Si RFID désactivé → on ignore
+if (!rfidActive) {
+  return;
+}
+
+if (!rfid.PICC_IsNewCardPresent() || !rfid.PICC_ReadCardSerial())
+   
+return;
+
+
+  String uid = getUIDString();
+  Serial.println(uid);
+
+  // ----- Associer UID à nom -----
+  String nom = "";
+  if (uid == "C3:83:86:E2") nom = "alpha";
+  else if (uid == "21:6D:51:5D") nom = "beta";
+  else if (uid == "E9:DF:08:83") nom = "gamma";
+  else if (uid == "A3:BE:FA:2C") nom = "delta";
+  else if (uid == "23:9B:3F:13") nom = "epsilon";
+  else nom = "Inconnu";
+
+  // -------------------------
+  // LOGIQUE D'AFFECTATION
+  // -------------------------
+
+  if (robotA == "") {
+    robotA = nom;
+  }
+  else if (robotB == "" && nom != robotA) {
+    robotB = nom;
+  }
+  else {
+  }
+
+  rfid.PICC_HaltA();
+  rfid.PCD_StopCrypto1();
+}

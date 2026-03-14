@@ -1,0 +1,32 @@
+#include <WiFi.h> // pour activer et configurer le WiFi de l’ESP32.
+#include <WebServer.h> // pour créer un serveur web qui écoute les requêtes HTTP (pages web, boutons, etc.).
+
+const char* ssid = "Bouba";
+const char* password = "Diallo12345";
+
+// Serveur web sur le port 80
+WebServer server(80);
+
+// Fonction pour gérer la page d’accueil
+void handleRoot() {
+  server.send(200, "text/html", "<h1>Ouais, j'ai reussi la connexion WiFi</h1>");
+}
+
+void setup() {
+
+  delay(1500);      // Petite pause pour laisser l’ESP32 bien démarrer avant d’activer le WiFi           
+
+  // Mode point d'accès
+  WiFi.mode(WIFI_AP);   // active  le mode point d’accès
+  WiFi.softAP(ssid, password); // crée le réseau WiFi avec le nom et le mot de passe
+
+  delay(500);   // On attend un peu pour être sûr que le réseau WiFi soit bien créé avant de continuer              
+
+  // Définir la route pour la page web
+  server.on("/", handleRoot);
+  server.begin();
+}
+
+void loop() {
+  server.handleClient(); // Chaque fois qu’un client (navigateur web) envoie une requête, cette fonction la traite et renvoie la réponse (par exemple, la page HTML).
+}

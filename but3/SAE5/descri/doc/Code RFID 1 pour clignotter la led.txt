@@ -1,0 +1,47 @@
+#include <SPI.h>      // Bibliothèque qui gère le bus SPI de l’ESP32 (SCK, MOSI, MISO)
+#include <MFRC522.h>   // Bibliothèque dédiée au lecteur RFID RC522 (simplifie l’accès aux registres)
+
+
+// --- Broches RC522 ---
+// SS (Chip Select) : permet de sélectionner le RC522 sur le bus SPI. Ici connecté à GPIO5.
+// Cette broche doit être définie car plusieurs périphériques SPI peuvent partager le bus.
+// Le microcontrôleur utilise CS pour "dire" au RC522 : "C’est toi qui réponds maintenant".
+#define SS_PIN   5       
+
+// RST (Reset) : permet de réinitialiser le RC522 via une broche de l’ESP32 (ici GPIO33).
+// Comme ce n’est pas une ligne SPI standard, on doit aussi la définir manuellement.
+#define RST_PIN  33      
+
+// LED verte connectée sur GPIO25 (s’allume quand une carte est détectée).
+#define Verte   25
+// LED rouge connectée sur GPIO27 (s’allume quand aucune carte n’est détectée).
+#define Rouge   27      
+// Création d’un objet RC522 en lui indiquant quelle broche sert de SS et RST.
+// Les lignes SPI MOSI (GPIO23), MISO (GPIO19) et SCK (GPIO18) sont gérées
+// automatiquement par la bibliothèque SPI.h (ce sont les broches par défaut de l’ESP32).
+MFRC522 mfrc522(SS_PIN, RST_PIN);
+void setup() {
+  SPI.begin();              // Initialise le bus SPI (MOSI, MISO, SCK avec pins par défaut)
+  mfrc522.PCD_Init();       // Initialise le RC522 (activation antenne, configuration des registres internes)
+  pinMode(Verte, OUTPUT);  // Définit GPIO25 (LED verte) comme sortie
+  pinMode(Rouge, OUTPUT);  // Définit GPIO27 (LED rouge) comme sortie
+  // Au démarrage, on suppose qu’aucune carte n’est présente :
+  digitalWrite(Verte, LOW);   // LED verte éteinte
+  digitalWrite(Rouge, HIGH);  // LED rouge allumée
+}
+void loop() {
+  // Vérifie s’il y a une nouvelle carte dans le champ ET si son UID peut être lu
+  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
+    // Si une carte est détectée et lisible :
+    digitalWrite(Verte, HIGH);   // Allumer LED verte
+    digitalWrite(Rouge, LOW);    // Éteindre LED rouge
+    delay(1000);                   // Attente pour stabiliser la détection
+    mfrc522.PICC_HaltA();         // Met la carte en veille (fin de communication avec la carte)| Sans ça, tu risques d’avoir des détections répétées en continu de la même carte.
+    mfrc522.PCD_StopCrypto1();    // Arrête le chiffrement et libère le RC522
+  } 
+  else {
+    // Sinon (pas de carte détectée ou non lisible) :
+    digitalWrite(Verte, LOW);    // Éteindre LED verte
+    digitalWrite(Rouge, HIGH);   // Allumer LED rouge
+  }
+}

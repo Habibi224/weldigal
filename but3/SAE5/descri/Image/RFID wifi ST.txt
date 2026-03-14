@@ -1,0 +1,262 @@
+#include <Arduino.h>
+#include <WiFi.h>
+#include <WebServer.h>
+#include <SPI.h>
+#include <MFRC522.h>
+#include <NTPClient.h>
+#include <WiFiUdp.h>
+
+// ===================== CONFIG WIFI =====================
+const char* ssid = "wifi_de_mon_pc";
+const char* password = "AZERTYXSZEDR552";
+
+// ===================== CONFIG RC522 =====================
+#define SS_PIN   5
+#define RST_PIN  33
+
+#define LED_OK   25   // LED verte
+#define LED_NO   27   // LED rouge
+#define LED_WARN 26   // LED jaune (hors horaire)
+
+WebServer server(80);
+MFRC522 mfrc522(SS_PIN, RST_PIN);
+
+// ===================== VARIABLES RFID =====================
+bool ledState = false;        
+unsigned long startTime = 0;  
+unsigned long totalPresence = 0; 
+String historyHTML = "";      
+bool horsHoraireActuel = false; // état hors plage
+
+// ===================== HORLOGE INTERNET =====================
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "pool.ntp.org", 7200, 60000);
+
+// ===================== HORAIRE DE POINTAGE =====================
+int startHour = 8, startMin = 0;
+int endHour   = 16, endMin   = 0;
+
+// ===================== FONCTIONS TEMPS =====================
+String getCurrentTime() {
+  time_t rawTime = timeClient.getEpochTime();
+  struct tm *ti = localtime(&rawTime);
+
+  char buffer[20];
+  sprintf(buffer, "%02d:%02d:%02d", ti->tm_hour, ti->tm_min, ti->tm_sec);
+  return String(buffer);
+}
+
+String getCurrentDate() {
+  time_t rawTime = timeClient.getEpochTime();
+  struct tm *ti = localtime(&rawTime);
+
+  char buffer[20];
+  sprintf(buffer, "%02d/%02d/%04d", ti->tm_mday, ti->tm_mon + 1, ti->tm_year + 1900);
+  return String(buffer);
+}
+
+String formatDuration(unsigned long ms) {
+  unsigned long sec = ms / 1000;
+  int h = sec / 3600;
+  int m = (sec % 3600) / 60;
+  int s = sec % 60;
+  char buffer[20];
+  sprintf(buffer, "%02d:%02d:%02d", h, m, s);
+  return String(buffer);
+}
+
+// ===================== PAGE HTML =====================
+String buildPage() {
+  String page = R"rawliteral(
+  <!DOCTYPE html>
+  <html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <title>Pointage RFID</title>
+    <style>
+      body { font-family: Arial, sans-serif; background: #f4f4f9; color: #333; text-align: center; }
+      header { background: #4CAF50; color: white; padding: 15px; font-size: 20px; }
+      .card { margin: 20px auto; padding: 20px; background: white; border-radius: 12px;
+              box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 80%; max-width: 700px; }
+      table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+      th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: center; }
+      th { background: #f0f0f0; }
+      .led { font-size: 18px; font-weight: bold; }
+      .alert { color: red; font-weight: bold; font-size: 18px; }
+      form { margin: 15px 0; }
+      input { padding: 5px; margin: 5px; }
+    </style>
+    <script>
+      async function refresh() {
+        const res = await fetch('/data');
+        const json = await res.json();
+        document.getElementById('date').innerText = json.date;
+        document.getElementById('heure').innerText = json.heure;
+        document.getElementById('etat').innerText = json.etat;
+        document.getElementById('total').innerText = json.total;
+        document.getElementById('history').innerHTML = json.history;
+        document.getElementById('horaire').innerText = json.horaire;
+
+        if (json.horshoraire === "1") {
+          document.getElementById('alerte').innerText = "⚠️ Hors horaire !";
+        } else {
+          document.getElementById('alerte').innerText = "";
+        }
+      }
+      setInterval(refresh, 1000); 
+      window.onload = refresh;
+    </script>
+  </head>
+  <body>
+    <header>📋 Système de pointage RFID</header>
+    <div class="card">
+      <p><b>Date actuelle :</b> <span id="date"></span></p>
+      <p><b>Heure actuelle :</b> <span id="heure"></span></p>
+      <p class="led">État actuel : <span id="etat"></span></p>
+      <p><b>Durée totale de présence :</b> <span id="total"></span></p>
+
+      <h3>⏰ Horaire autorisé :</h3>
+      <p id="horaire"></p>
+      <form action="/sethoraire" method="GET">
+        Début: <input type="time" name="start">
+        Fin: <input type="time" name="end">
+        <input type="submit" value="Mettre à jour">
+      </form>
+      <p class="alert" id="alerte"></p>
+
+      <h3>Historique :</h3>
+      <table>
+        <thead>
+          <tr><th>Date</th><th>Entrée</th><th>Sortie</th><th>Durée</th></tr>
+        </thead>
+        <tbody id="history"></tbody>
+      </table>
+    </div>
+  </body>
+  </html>
+  )rawliteral";
+  return page;
+}
+
+// ===================== SERVER HANDLERS =====================
+void handleRoot() {
+  server.send(200, "text/html", buildPage());
+}
+
+void handleData() {
+  char buf[50];
+  sprintf(buf, "%02d:%02d - %02d:%02d", startHour, startMin, endHour, endMin);
+
+  String json = "{";
+  json += "\"date\":\"" + getCurrentDate() + "\",";
+  json += "\"heure\":\"" + getCurrentTime() + "\",";
+  json += "\"etat\":\"" + String(ledState ? "🟢 Pointé" : "🔴 Dépointé") + "\",";
+  json += "\"total\":\"" + formatDuration(totalPresence) + "\",";
+  json += "\"history\":\"" + historyHTML + "\",";
+  json += "\"horaire\":\"" + String(buf) + "\",";
+  json += "\"horshoraire\":\"" + String(horsHoraireActuel ? "1" : "0") + "\"";
+  json += "}";
+  server.send(200, "application/json", json);
+}
+
+void handleHoraire() {
+  if (server.hasArg("start") && server.hasArg("end")) {
+    String s = server.arg("start");
+    String e = server.arg("end");
+    startHour = s.substring(0,2).toInt();
+    startMin  = s.substring(3).toInt();
+    endHour   = e.substring(0,2).toInt();
+    endMin    = e.substring(3).toInt();
+  }
+  server.sendHeader("Location", "/");
+  server.send(303);
+}
+
+// ===================== SETUP =====================
+void setup() {
+  Serial.begin(9600);
+  SPI.begin();
+  mfrc522.PCD_Init();
+
+  pinMode(LED_OK, OUTPUT);
+  pinMode(LED_NO, OUTPUT);
+  pinMode(LED_WARN, OUTPUT);
+
+  digitalWrite(LED_OK, LOW);
+  digitalWrite(LED_NO, HIGH);
+  digitalWrite(LED_WARN, LOW);
+
+  // WiFi en STATION
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+  Serial.print("Connexion au WiFi");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\nConnecté au WiFi !");
+  Serial.print("Adresse IP : ");
+  Serial.println(WiFi.localIP());
+
+  // NTP
+  timeClient.begin();
+
+  // Routes
+  server.on("/", handleRoot);
+  server.on("/data", handleData);
+  server.on("/sethoraire", handleHoraire);
+  server.begin();
+
+  Serial.println("Serveur actif. Ouvrez le navigateur à l’adresse IP ci-dessus.");
+}
+
+// ===================== LOOP =====================
+void loop() {
+  server.handleClient();
+  timeClient.update();
+
+  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
+    ledState = !ledState;
+
+    String currentDate = getCurrentDate();
+    String currentTime = getCurrentTime();
+
+    int h = timeClient.getHours();
+    int m = timeClient.getMinutes();
+
+    // vérifie si dans la plage horaire
+    horsHoraireActuel = (h < startHour || (h == startHour && m < startMin) ||
+                        h > endHour   || (h == endHour && m > endMin));
+
+    if (horsHoraireActuel) {
+      digitalWrite(LED_WARN, HIGH);
+    } else {
+      digitalWrite(LED_WARN, LOW);
+    }
+
+    if (ledState) {
+      // Entrée
+      digitalWrite(LED_OK, HIGH);
+      digitalWrite(LED_NO, LOW);
+      startTime = millis();
+      historyHTML += "<tr><td>" + currentDate + "</td><td>" + currentTime + "</td><td>-</td><td>-</td></tr>";
+    } else {
+      // Sortie
+      digitalWrite(LED_OK, LOW);
+      digitalWrite(LED_NO, HIGH);
+
+      unsigned long session = millis() - startTime;
+      totalPresence += session;
+
+      int pos = historyHTML.lastIndexOf("</tr>");
+      if (pos != -1) {
+        historyHTML.remove(pos);
+        historyHTML += "<td>" + currentTime + "</td><td>" + formatDuration(session) + "</td></tr>";
+      }
+    }
+
+    mfrc522.PICC_HaltA();
+    mfrc522.PCD_StopCrypto1();
+    delay(1000);
+  }
+}

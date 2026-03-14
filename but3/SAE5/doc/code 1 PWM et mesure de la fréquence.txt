@@ -1,0 +1,108 @@
+#include <Arduino.h>
+#include "driver/pcnt.h"
+
+#define SIGNAL_GPIO 23   // Génération 1 kHz
+#define CAPT1_GPIO  34   // Capteur 1
+#define CAPT2_GPIO  35   // Capteur 2
+
+#define PCNT_UNIT_1 PCNT_UNIT_0
+#define PCNT_UNIT_2 PCNT_UNIT_1
+#define PCNT_CH     PCNT_CHANNEL_0
+
+#define F_MIN 950
+#define F_MAX 1050
+
+unsigned long lastMeasure = 0;
+unsigned long incorrectTime = 0;
+bool freqIncorrect = false;
+unsigned long tIncorrectStart = 0;
+
+void setup() {
+  Serial.begin(115200);
+
+  pinMode(SIGNAL_GPIO, OUTPUT);
+  pinMode(CAPT1_GPIO, INPUT);
+  pinMode(CAPT2_GPIO, INPUT);
+
+  /* -------- PCNT capteur 1 (GPIO34) -------- */
+  pcnt_config_t pcnt1 = {};
+  pcnt1.pulse_gpio_num = CAPT1_GPIO;
+  pcnt1.ctrl_gpio_num  = PCNT_PIN_NOT_USED;
+  pcnt1.unit = PCNT_UNIT_1;
+  pcnt1.channel = PCNT_CH;
+  pcnt1.pos_mode = PCNT_COUNT_INC;
+  pcnt1.neg_mode = PCNT_COUNT_DIS;
+  pcnt1.lctrl_mode = PCNT_MODE_KEEP;
+  pcnt1.hctrl_mode = PCNT_MODE_KEEP;
+  pcnt1.counter_h_lim = 32767;
+  pcnt1.counter_l_lim = 0;
+  pcnt_unit_config(&pcnt1);
+
+  /* -------- PCNT capteur 2 (GPIO35) -------- */
+  pcnt_config_t pcnt2 = pcnt1;
+  pcnt2.pulse_gpio_num = CAPT2_GPIO;
+  pcnt2.unit = PCNT_UNIT_2;
+  pcnt_unit_config(&pcnt2);
+
+  pcnt_set_filter_value(PCNT_UNIT_1, 100);
+  pcnt_set_filter_value(PCNT_UNIT_2, 100);
+  pcnt_filter_enable(PCNT_UNIT_1);
+  pcnt_filter_enable(PCNT_UNIT_2);
+
+  pcnt_counter_pause(PCNT_UNIT_1);
+  pcnt_counter_pause(PCNT_UNIT_2);
+  pcnt_counter_clear(PCNT_UNIT_1);
+  pcnt_counter_clear(PCNT_UNIT_2);
+  pcnt_counter_resume(PCNT_UNIT_1);
+  pcnt_counter_resume(PCNT_UNIT_2);
+}
+
+void loop() {
+
+  /* -------- Génération signal carré 1 kHz -------- */
+  digitalWrite(SIGNAL_GPIO, HIGH);
+  delayMicroseconds(500);
+  digitalWrite(SIGNAL_GPIO, LOW);
+  delayMicroseconds(500);
+
+  /* -------- Mesure fréquence toutes les 1 s -------- */
+  if (millis() - lastMeasure >= 1000) {
+    lastMeasure = millis();
+
+    int16_t f1 = 0, f2 = 0;
+    pcnt_get_counter_value(PCNT_UNIT_1, &f1);
+    pcnt_get_counter_value(PCNT_UNIT_2, &f2);
+
+    pcnt_counter_clear(PCNT_UNIT_1);
+    pcnt_counter_clear(PCNT_UNIT_2);
+
+    Serial.print("Frequence capteur 1 (GPIO34) : ");
+    Serial.print(f1);
+    Serial.println(" Hz");
+
+    Serial.print("Frequence capteur 2 (GPIO35) : ");
+    Serial.print(f2);
+    Serial.println(" Hz");
+
+    bool incorrect =
+      (f1 < F_MIN || f1 > F_MAX) ||
+      (f2 < F_MIN || f2 > F_MAX);
+
+    /* -------- Chronométrage -------- */
+    if (incorrect) {
+      if (!freqIncorrect) {
+        freqIncorrect = true;
+        tIncorrectStart = millis();
+      }
+    } else {
+      if (freqIncorrect) {
+        incorrectTime += millis() - tIncorrectStart;
+        freqIncorrect = false;
+      }
+    }
+
+    Serial.print("Temps frequence incorrecte (ms) : ");
+    Serial.println(incorrectTime);
+    Serial.println("----------------------------");
+  }
+}

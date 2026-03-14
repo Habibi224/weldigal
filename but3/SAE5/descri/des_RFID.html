@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RFID</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: #2c3e50;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      margin-top: 30px;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 5px;
+    }
+
+    p {
+      margin-bottom: 15px;
+    }
+
+    code {
+      display: block;
+      background-color: #ecf0f1;
+      padding: 10px;
+      margin: 10px 0;
+      border-left: 4px solid #3498db;
+      white-space: pre-wrap;
+    }
+
+    ul {
+      margin-left: 20px;
+    }
+
+    .note {
+      font-style: italic;
+      color: #7f8c8d;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Implémenter un système de suivi de présence avec le module RC522 et l’ESP32</h1>
+
+  <h2>Introduction</h2>
+  <p>Ici, dans cette activité, l’objectif n’était pas uniquement de répondre à un besoin fonctionnel précis, mais
+    avant tout de m’exercer et d’approfondir mes connaissances en RFID et en communication Wi-Fi, dans une démarche
+    d’apprentissage et d’expérimentation. Pour cela, j’ai choisi de mettre en place une communication entre un
+    microcontrôleur ESP32 et un lecteur RFID RC522, autour d’un cas d’usage simple et concret.</p>
+  <p>Le principe retenu consiste à concevoir un système simplifié de gestion de présence, capable de mesurer le temps
+    écoulé entre un pointage et un dépointage réalisés à l’aide d’une carte RFID. Lorsqu’une carte est détectée, le
+    système enregistre l’instant correspondant à l’entrée, puis calcule la durée de présence jusqu’à la lecture
+    suivante, considérée comme la sortie. Ce scénario permet de mettre en pratique la lecture RFID, la gestion du temps
+    et la communication des données.</p>
+  <p>Les informations de présence sont associées à une interface, développée sous forme d’application web ou
+    d’application Python, permettant de consulter un historique des pointages. Cet historique est présenté sous la forme
+    d’un tableau comprenant la date, l’heure d’entrée et l’heure de sortie, avec un calcul automatique de la durée
+    totale de présence. Afin de conserver une logique simple et pédagogique, l’historique est réinitialisé à la fin de
+    chaque mois, simulant un nouveau cycle de suivi.</p>
+  <p>Cette activité correspond volontairement à une version réduite et simplifiée d’un système de gestion de présence
+    tel qu’il peut être rencontré en milieu professionnel. Pour cette première réalisation, une seule carte RFID est
+    utilisée, sans intégration de base de données externe. Le fonctionnement repose uniquement sur les lectures
+    effectuées par le module RC522 connecté à l’ESP32, ce qui permet d’utiliser indifféremment la même carte pour le
+    pointage et le dépointage</p>
+  <p>La mise en œuvre de ce système passe dans un premier temps par la compréhension du principe de fonctionnement de la
+    technologie RFID, puis par l’étude de la documentation technique du module RC522 afin d’identifier les modalités de
+    communication avec l’ESP32. Sur cette base, un programme est ensuite développé pour assurer la lecture des cartes,
+    l’enregistrement des instants de pointage et le calcul des durées de présence. Une version ultérieure du projet
+    pourra venir enrichir ce dispositif par l’intégration d’une base de données, permettant une gestion plus complète,
+    robuste et évolutive des informations.</p>
+
+
+  <h2>La technologie RFID</h2>
+  <p>
+    La RFID (Radio Frequency Identification) est une technologie d’identification et de traçabilité reposant sur
+    l’utilisation des ondes radio. Elle permet d’identifier, de stocker et d’échanger des informations relatives à des
+    objets, des animaux ou des personnes, sans nécessiter de contact direct ni de visibilité optique, grâce à un
+    identifiant unique enregistré dans une base de données. Contrairement aux codes-barres ou aux QR codes, qui exigent
+    une lecture optique ciblée, la RFID offre la possibilité d’identifier plusieurs éléments simultanément, même
+    lorsqu’ils ne se trouvent pas dans l’axe du lecteur.
+  </p>
+  <p>
+    Un système RFID se compose de deux éléments essentiels : le lecteur et le tag. Le lecteur, muni d’une antenne et
+    d’un module émetteur-récepteur,
+    génère un champ électromagnétique qui active le tag lorsqu’il entre dans sa zone de couverture. Le tag, quant à lui,
+    est constitué d’une
+    puce électronique associée à une antenne miniature. Une fois activé, il renvoie l’information qu’il contient,
+    généralement un identifiant
+    unique ou des données complémentaires stockées dans sa mémoire interne. Les tags RFID existent principalement sous
+    trois formes :
+  </p>
+  <ul>
+    <li><strong>Tags passifs : </strong>ils ne disposent d’aucune source d’alimentation interne. Leur fonctionnement
+      repose uniquement sur l’énergie électromagnétique transmise par le lecteur. Cette caractéristique les rend
+      économiques et durables, mais leur portée reste limitée à quelques centimètres ou quelques mètres selon la
+      fréquence utilisée.</li>
+    <li><strong>Tags actifs :</strong> ils intègrent une petite batterie interne qui leur permet d’émettre un signal de
+      manière autonome, sans dépendre entièrement du lecteur. Cette autonomie leur confère une portée beaucoup plus
+      importante et la possibilité de stocker et transmettre davantage de données. En revanche, leur coût est plus élevé
+      et leur durée de vie est limitée par celle de la batterie.</li>
+    <li><strong>Tags semi-actifs (ou semi-passifs) : </strong>ils constituent une solution intermédiaire. Comme les
+      passifs, ils ne transmettent pas en continu, mais, à l’instar des actifs, ils disposent d’une batterie interne.
+      Celle-ci sert principalement à alimenter le circuit électronique du tag, ce qui améliore la portée et la rapidité
+      de communication, tout en évitant une émission permanente trop consommatrice d’énergie.</li>
+  </ul>
+  <p>
+    La communication RFID utilise différentes bandes de fréquences, chacune adaptée à des usages spécifiques. Les basses
+    fréquences (autour de 125 kHz) offrent une
+    portée réduite mais une grande robustesse dans les environnements perturbés, ce qui les rend adaptées à
+    l’identification animale ou aux systèmes de contrôle
+    d’accès simples. Les hautes fréquences (13,56 MHz) sont les plus répandues et se retrouvent notamment dans les
+    cartes de transport, les cartes bancaires sans
+    contact ou les bibliothèques. Quant aux ultra-hautes fréquences (entre 860 et 960 MHz), elles offrent des portées
+    plus importantes et sont largement utilisées
+    dans la logistique, le suivi des stocks et la gestion d’inventaires. Ainsi, la RFID constitue aujourd’hui une
+    technologie incontournable pour l’identification et la gestion de données en temps réel. Sa combinaison de
+    simplicité,
+    de rapidité et de flexibilité en fait une solution privilégiée aussi bien dans la vie quotidienne des particuliers
+    que dans l’organisation complexe des
+    entreprises.
+  </p>
+
+  <p>Après avoir présenté le principe général de la technologie RFID, il est essentiel de s’intéresser au module RC522,
+    qui constitue le lecteur utilisé dans cette activité et qui permet la mise en œuvre concrète de cette technologie.
+  </p>
+
+  <p style="text-align:center;">Pour en savoir plus :</p>
+
+  <div style="display: flex; justify-content: center; margin: 20px 0;">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/tUbtpmNQhCc" title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen>
+    </iframe>
+  </div>
+
+  <p style="text-align:center;">Source : YouTube</p>
+
+
+  <p style="text-align:center;">Source :</p>
+
+
+  <p style="text-align:center;"> <a
+      href="https://iotjourney.orange.com/fr-FR/support/faq/qu'est-ce-que-la-technologie-rfid-:-definition-et-fonctionnement">Qu’est-ce
+      que la technologie RFID</a></p>
+  <p style="text-align:center;"> <a href="https://www.futura-sciences.com/tech/definitions/tech-rfid-4187/">RFID :
+      qu'est-ce que c'est ?</a></p>
+  <p style="text-align:center;"><a
+      href="https://sbedirect.com/fr/blog/article/comprendre-la-rfid-en-10-points.html">Comprendre la RFID en 10
+      points</a></p>
+
+
+
+  <h2>Lecteur RFID RC522</h2>
+
+  <p>Le MFRC522, intégré au module RC522, est un circuit spécialisé dans la communication RFID à haute fréquence,
+    opérant à 13,56 MHz et conforme à la norme ISO/IEC 14443A.
+    Sa fonction ne se limite pas à la génération d’un champ électromagnétique via l’antenne intégrée : il assure
+    également la modulation, la démodulation et le décodage des
+    signaux échangés avec la carte, tout en gérant les mécanismes de sécurité propres aux cartes MIFARE Classic,
+    notamment le chiffrement basé sur l’algorithme Crypto1.
+    Le composant intègre un tampon FIFO de 64 octets, qui permet de stocker temporairement les données lors des
+    opérations de lecture et d’écriture, et prend en charge
+    des débits allant jusqu’à 848 kbit/s, ce qui garantit une communication rapide et efficace avec les cartes RFID.
+    Pour assurer son interfaçage avec un microcontrôleur
+    tel que l’ESP32, le MFRC522 propose plusieurs modes de communication : l’UART, l’I²C et surtout le SPI, qui reste le
+    plus couramment utilisé en raison de sa
+    simplicité et de sa vitesse pouvant atteindre 10 Mbit/s. Cette flexibilité rend le module facilement intégrable dans
+    des environnements variés, qu’il s’agisse
+    de systèmes embarqués à faible consommation ou de plateformes de prototypage comme l’ESP32. Dans une application
+    typique, le microcontrôleur configure le RC522
+    via l’interface SPI, envoie des commandes au travers de registres internes, et lit les données renvoyées par le
+    tampon FIFO après la détection et l’authentification
+    d’une carte.
+    Sa portée effective, généralement comprise entre 3 et 5 cm, dépend de l’antenne intégrée et de la qualité du tag
+    utilisé. Dans le cadre de l’activité envisagée,
+    il constitue le maillon essentiel permettant de relier physiquement la carte RFID et le microcontrôleur ESP32, et
+    donc d’assurer la collecte et le traitement des
+    informations nécessaires à la gestion et suivui du challenge.
+  </p>
+
+  <h2>Fonctionnement </h2>
+  <p>
+    Techniquement, lorsque le RC522 détecte une carte RFID dans son champ, il procède à la démodulation et au décodage
+    du signal avant de placer les informations dans son tampon interne FIFO de 64 octets, qui joue le rôle de mémoire
+    temporaire. Ces données ne sont pas transmises automatiquement au microcontrôleur ; c’est l’ESP32 qui doit
+    interroger le module en utilisant l’interface SPI.
+  </p>
+
+  <p>
+    Dans ce mode de communication, quatre lignes principales interviennent. La broche CS (Chip Select) est utilisée par
+    l’ESP32 pour sélectionner le RC522. lorsqu’elle est à l’état bas, le module devient l’esclave actif et accepte les
+    transactions ; lorsqu’elle repasse à l’état haut, la communication est close. La synchronisation est assurée par le
+    signal d’horloge fourni par l’ESP32 sur la ligne SCK et à chaque impulsion d’horloge, un bit peut être envoyé. Pour
+    accéder aux données, le microcontrôleur envoie une requête au RC522 par la ligne MOSI, généralement sous la forme
+    d’une adresse de registre accompagnée d’un ordre de lecture ou d’écriture. En réponse, le RC522 transmet la valeur
+    demandée ou le contenu de son tampon FIFO sur la ligne MISO, permettant ainsi un échange bidirectionnel parfaitement
+    cadencé.
+  </p>
+
+  <h2>Développement des programmes</h2>
+  <p>
+    En s’appuyant sur les informations techniques étudiées, il est désormais possible de passer à la phase de
+    développement. L’approche retenue consiste à concevoir progressivement différents programmes, en commençant par les
+    plus simples pour évoluer ensuite vers des fonctionnalités plus élaborées, adaptées aux capacités du module RC522 et
+    du microcontrôleur ESP32.
+  </p>
+
+  <p>
+    Dans un premier temps, l’objectif est de réaliser un programme de base permettant simplement d’indiquer, à l’aide de
+    deux voyants lumineux, la présence ou l’absence d’une carte RFID dans le champ du lecteur. Ainsi, lorsqu’aucune
+    carte n’est détectée, une LED connectée au GPIO27 de l’ESP32 doit s’allumer. À l’inverse, lorsqu’une carte est
+    reconnue par le module RC522, une autre LED reliée au GPIO25 s’active.
+  </p>
+
+  <p>
+    Pour mettre en œuvre ce premier programme, le code s’appuie sur deux bibliothèques principales. La première, SPI.h,
+    permet à l’ESP32 de communiquer avec le module RC522 grâce au protocole SPI, en exploitant les lignes de données
+    MOSI, MISO, SCK ainsi que la broche de sélection SS définie sur le GPIO5.
+    La seconde, MFRC522.h, fournit des fonctions de haut niveau qui facilitent l’initialisation du lecteur, la détection
+    de la présence d’une carte RFID et la lecture de son identifiant (UID), évitant ainsi de manipuler directement les
+    registres internes du circuit.
+  </p>
+
+  <p>
+    En parallèle, le programme utilise quelques ressources matérielles spécifiques. La broche RST, reliée au GPIO33,
+    sert à réinitialiser le RC522 au démarrage afin de garantir un fonctionnement correct. Les GPIO25 et GPIO27,
+    configurés en sortie, pilotent respectivement une LED verte et une LED rouge. L’algorithme de fonctionnement repose
+    alors sur une logique simple : au démarrage, la LED rouge est allumée pour signaler l’absence de carte ; puis, dans
+    la boucle principale, l’ESP32 interroge en continu le lecteur. Si une carte est détectée et que son UID peut être lu
+    correctement, la LED verte s’allume pendant 500ms tandis que la LED rouge s’éteint, et la carte est ensuite mise en
+    veille avec la commande PICC_HaltA, tandis que le chiffrement interne est désactivé par PCD_StopCrypto1 pour
+    préparer la prochaine détection. Dans le cas contraire, si aucune carte n’est présente, la LED rouge reste allumée
+    et la verte éteinte.
+  </p>
+
+  <p>
+    Ainsi, ce premier programme combine l’utilisation des bibliothèques SPI et MFRC522 avec la gestion de quelques
+    broches de l’ESP32, afin de produire une interaction simple et visible entre le système et l’utilisateur à travers
+    l’allumage des LED.
+  </p>
+
+  <p>
+    Code
+  </p>
+
+  <pre><code>
+#include SPI.h     // Bibliothèque qui gère le bus SPI de l’ESP32 (SCK, MOSI, MISO)
+#include MFRC522.h   // Bibliothèque dédiée au lecteur RFID RC522 (simplifie l’accès aux registres)
+
+
+// --- Broches RC522 ---
+// SS (Chip Select) : permet de sélectionner le RC522 sur le bus SPI. Ici connecté à GPIO5.
+// Cette broche doit être définie car plusieurs périphériques SPI peuvent partager le bus.
+// Le microcontrôleur utilise CS pour "dire" au RC522 : "C’est toi qui réponds maintenant".
+#define SS_PIN   5       
+
+// RST (Reset) : permet de réinitialiser le RC522 via une broche de l’ESP32 (ici GPIO33).
+// Comme ce n’est pas une ligne SPI standard, on doit aussi la définir manuellement.
+#define RST_PIN  33      
+
+// LED verte connectée sur GPIO25 (s’allume quand une carte est détectée).
+#define Verte   25
+// LED rouge connectée sur GPIO27 (s’allume quand aucune carte n’est détectée).
+#define Rouge   27      
+// Création d’un objet RC522 en lui indiquant quelle broche sert de SS et RST.
+// Les lignes SPI MOSI (GPIO23), MISO (GPIO19) et SCK (GPIO18) sont gérées
+// automatiquement par la bibliothèque SPI.h (ce sont les broches par défaut de l’ESP32).
+MFRC522 mfrc522(SS_PIN, RST_PIN);
+void setup() {
+  SPI.begin();              // Initialise le bus SPI (MOSI, MISO, SCK avec pins par défaut)
+  mfrc522.PCD_Init();       // Initialise le RC522 (activation antenne, configuration des registres internes)
+  pinMode(Verte, OUTPUT);  // Définit GPIO25 (LED verte) comme sortie
+  pinMode(Rouge, OUTPUT);  // Définit GPIO27 (LED rouge) comme sortie
+  // Au démarrage, on suppose qu’aucune carte n’est présente :
+  digitalWrite(Verte, LOW);   // LED verte éteinte
+  digitalWrite(Rouge, HIGH);  // LED rouge allumée
+}
+void loop() {
+  // Vérifie s’il y a une nouvelle carte dans le champ ET si son UID peut être lu
+  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
+    // Si une carte est détectée et lisible :
+    digitalWrite(Verte, HIGH);   // Allumer LED verte
+    digitalWrite(Rouge, LOW);    // Éteindre LED rouge
+    delay(1000);                   // Attente pour stabiliser la détection
+    mfrc522.PICC_HaltA();         // Met la carte en veille (fin de communication avec la carte)| Sans ça, tu risques d’avoir des détections répétées en continu de la même carte.
+    mfrc522.PCD_StopCrypto1();    // Arrête le chiffrement et libère le RC522
+  } 
+  else {
+    // Sinon (pas de carte détectée ou non lisible) :
+    digitalWrite(Verte, LOW);    // Éteindre LED verte
+    digitalWrite(Rouge, HIGH);   // Allumer LED rouge
+  }
+}
+</code></pre>
+  <div style="text-align: center;">
+    <p><strong>Démonstration</strong></p>
+    <video width="640" controls>
+      <source src="doc/demo detection.mp4" type="video/mp4">
+      Votre navigateur ne supporte pas la lecture de vidéos.
+    </video>
+  </div>
+
+  Ce premier programme fonctionne parfaitement, comme on peut l’observer dans la démonstration vidéo. Pour aller plus
+  loin, l’objectif est d’améliorer le comportement des voyants en introduisant une logique de toggle. Concrètement,
+  lorsqu’une carte est détectée, la LED verte s’allume et reste active ; lors d’une nouvelle détection, l’état bascule
+  automatiquement, la LED verte s’éteint et la LED rouge reprend sa place. Chaque passage de carte agit ainsi comme un
+  interrupteur logique qui inverse l’état précédent du système.
+  </p>
+
+  <pre><code>
+#include SPI.h
+#include MFRC522.h
+
+// Pins RC522 (SPI)
+#define SS_PIN   5
+#define RST_PIN  33
+
+// LEDs
+#define LED_verte   25   // LED verte (ON après badge)
+#define LED_rouge  27   // LED rouge (OFF après badge)
+
+MFRC522 mfrc522(SS_PIN, RST_PIN);
+
+// Variable d'état
+bool ledState = false;  // false = rouge ON, true = vert ON
+
+void setup() {
+  Serial.begin(115200);
+  SPI.begin(); 
+  mfrc522.PCD_Init();
+
+  pinMode(LED_verte, OUTPUT);
+  pinMode(LED_rouge, OUTPUT);
+
+  // État initial
+  digitalWrite(LED_verte, LOW);
+  digitalWrite(LED_rouge, HIGH);
+
+  Serial.println("Approche une carte RFID...");
+}
+
+void loop() {
+  // Vérifie si une nouvelle carte est présente
+  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
+    // Toggle de l'état
+    ledState = !ledState;
+
+    if (ledState=true) {
+      // LED verte allumée
+      digitalWrite(LED_verte, HIGH);
+      digitalWrite(LED_rouge, LOW);
+    } else {
+      // Retour LED rouge
+      digitalWrite(LED_verte, LOW);
+      digitalWrite(LED_rouge, HIGH);
+    }
+
+    // Bonne pratique : fin de com
+    mfrc522.PICC_HaltA();
+    mfrc522.PCD_StopCrypto1();
+    delay(1000); // Anti-rebond pour éviter plusieurs toggles d'un coup
+  }
+}
+</code></pre>
+
+  <p>Tout se passe comme prévu :</p>
+
+  <div style="display:flex; justify-content:center; margin:20px 0;">
+    <video width="560" height="315" controls>
+      <source src="Image/demo_code2.mp4" type="video/mp4">
+    </video>
+  </div>
+
+  <p>
+    Nous y sommes presque. À ce stade, avec tout le bagage technique acquis et les bases fonctionnelles validées, il est
+    désormais possible d’élargir le projet en intégrant des fonctionnalités plus avancées. Pour ce faire, le Wi-Fi de
+    l’ESP32 a été activé en mode Station (ST) afin d’accéder à internet et de récupérer automatiquement l’heure via les
+    serveurs NTP (Network Time Protocol).<br>
+    Une page HTML simple a été créée sur la base du code 2 et permet de mesurer le temps pendant lequel la LED verte
+    reste allumée.
+  </p>
+
+  <p>
+    Ensuite, un historique est généré avec les informations suivantes : la date (jj/mm/aaaa), l’heure d’entrée
+    (hh:mm:ss) et l’heure de sortie (hh:mm:ss). Le système affiche également le temps total de présence, correspondant à
+    la durée pendant laquelle la LED verte est restée activée.<br>
+    Il est aussi possible de configurer des plages horaires valides pour pointer, ce qui garantit un contrôle strict du
+    respect des horaires définis.
+  </p>
+
+  <p>
+    Pour concrétiser cette évolution, plusieurs mécanismes techniques ont été mis en place. Tout d’abord, l’ESP32,
+    connecté en mode ST, récupère automatiquement la date et l’heure via internet. Cette synchronisation avec les
+    serveurs NTP garantit une précision fiable et constante, sans dépendre d’une horloge logicielle approximative.<br>
+    Parallèlement, un serveur web embarqué a été implémenté directement sur l’ESP32. Celui-ci génère une interface en
+    HTML et CSS,
+    enrichie par des scripts JavaScript permettant un rafraîchissement automatique des données. Grâce à cette interface,
+    l’utilisateur dispose en temps réel d’un suivi clair et ergonomique de l’état du système : l’heure courante, l’état
+    de
+    présence, le cumul des durées ainsi que l’historique complet des pointages.
+  </p>
+
+  <p>Enfin, une logique de contrôle des horaires a été intégrée. L’utilisateur peut définir une plage horaire autorisée
+    depuis l’interface web ; le système compare alors chaque tentative de pointage avec ces paramètres. Si le pointage
+    s’effectue en dehors des heures permises, la LED jaune s’active afin d’alerter l’utilisateur d’une anomalie
+    temporelle. Ce mécanisme ajoute une dimension de fiabilité et de rigueur au système, en le rapprochant des solutions
+    professionnelles de gestion de présence.</p>
+
+  <!-- Affiche l'image centrée avec légende -->
+  <figure style="display:flex; flex-direction:column; align-items:center; gap:8px; margin:24px 0;">
+    <img src="Image/interfa%20fin.jpg" alt="Interface prise au téléphone — ouf de soulagement"
+      style="max-width:1000px; width:100%; height:auto; border-radius:8px; box-shadow:0 6px 18px rgba(0,0,0,0.15);">
+    <figcaption style="text-align:center; font-style:italic; color:#333;">
+      Le esp32 est connecté au wifi de mon pc qui lui attribu un IP
+    </figcaption>
+  </figure>
+
+  <p style="text-align:center; margin-top:20px;">
+    👉 Pour consulter le programme complet, cliquez ici :
+    <a href="Image/RFID wifi ST.txt" style="font-weight:bold; color:#0077cc;">Voir le code final</a>
+  </p>
+
+
+</body>
+
+</html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+
+<head>
+  <meta charset="UTF-8">
+    <title>Mon site web pour le portfolio</title>
+
+    <!-- Feuille de style principale -->
+    <link rel="stylesheet" href="SAE4.css">
+
+    <!-- Import des polices Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Marathi:ital@0;1&display=swap" rel="stylesheet">
+</head>
+
+
+</head>
+<link href="https://fonts.googleapis.com/css2?family=Vintage+Goods&display=swap" rel="stylesheet">
+
+<body>
+
+  <div class="header">Projet 2 (SAE4) :Cardiofréquentiomètre (Semestre 4)</div>
+
+ 
+  <table>
+  <tr>
+    <td colspan="4">
+      <p class="objective"></p>
+        <p>
+    Ce projet consiste à concevoir un système électronique embarqué permettant de mesurer, transmettre sans fil et afficher en temps réel 
+    le rythme cardiaque d’une personne. Il s’inscrit dans le domaine de la <strong>e-santé</strong>, avec des applications aussi bien médicales que sportives.<br><br>
+
+    Le dispositif se compose de deux parties principales : un <strong>bracelet de mesure</strong> porté par l’utilisateur et une <strong>station de réception</strong> 
+    équipée d’un écran pour l’affichage des données.<br><br>
+
+    Le bracelet utilise un capteur optique pour détecter les battements cardiaques, associés à une chaîne de traitement analogique, 
+    un microcontrôleur <strong>ATTiny85</strong> pour l’analyse du signal, et un module radio pour transmettre les informations. 
+    L’objectif est d’assurer une consommation réduite pour permettre une <strong>alimentation par piles</strong>.<br><br>
+
+    La station réceptrice repose sur un récepteur radio et une <strong>carte STM32F429 Discovery</strong> avec écran intégré. 
+    Elle reçoit les données transmises par le bracelet, les traite, puis les affiche sous différentes formes : 
+    valeur instantanée du rythme, moyenne sur une minute, évolution dans le temps, ou encore 
+    courbe d’historique.<br><br>
+
+    Ce projet mobilise des compétences en <strong>électronique analogique et numérique</strong>, <strong>traitement du signal</strong>, 
+    <strong>systèmes embarqués</strong> et <strong>communication sans fil</strong>. 
+    Il constitue un exemple concret d'application dans le secteur des objets connectés pour la santé.
+</p>
+    </td>
+  </tr>
+
+       
+
+    <tr>
+      <th>Tâches réalisées</th>
+      <th>Ressources utilisées</th>
+      <th>Traces</th>
+      <th>Autoévaluation</th>
+    </tr>
+   
+
+    <tr>
+      <td>
+        <p><strong>Tester la transmission et reception </strong><br>
+Le test consiste à vérifier le bon fonctionnement de la communication entre l'émetteur TXM433-LR et le récepteur RXM-433-LR en utilisant une liaison série asynchrone de type UART. 
+Pour cela, un générateur de basse fréquence (GBF) est utilisé pour envoyer un signal carré 
+de fréquence 4,8 kHz (correspondant au débit de 4800 bauds) sur l'entrée DATA de la carte 
+d'émission. Le signal émis est ensuite capté par le récepteur, et la sortie DATA de ce dernier 
+est visualisée à l'aide d'un oscilloscope. L'objectif est de comparer les signaux émis et reçus 
+pour valider la transmission.<br></p>
+       
+  <td class="resources">
+                <p><b>Matérielles :</b> LINX-TXM-433</p><p>LINX-RXM-433</p><p>GBF</p> 
+                
+                <p><b>Documents :</b> <p><a href="doc/TXM-FFF-LR.PDF">doc1</a></p>
+                <p><a href="doc/ENG_DS_RXM-433-LR_A.pdf">doc2</a></p>
+                <p><b>Pédagogique:</b> <p>M. Duvanaud</p></p>
+            </td>
+            <td>
+                <p>
+                    <a href="doc/Schema.PNG">Schéma réalisé</a>
+                </p>
+                <p>
+                    <a href="doc/Partie Transmission CR (1).pdf">Compte rendu</a>
+                </p> 
+
+                <p>
+                    <a href="doc/video.mp4">Video</a>
+                </p> 
+
+
+            </td>
+            <td>
+                <p>Cette partie consistait essentiellement à effectuer un câblage correct entre l’émetteur (TXM433-LR) et le récepteur
+                     (RXM433-LR), en utilisant une liaison UART à 4800 bauds. Un générateur basse fréquence a été utilisé pour simuler un 
+                     signal carré à 4,8 kHz, correspondant au débit attendu.</p>
+                
+                     <p>Le signal reçu, visualisé à l’oscilloscope, correspondait parfaitement au signal émis. Cela montre que la communication entre les deux modules fonctionne correctement.</p>
+            </td>
+        </tr>
+    </tr>
+
+
+    <tr>
+            <td>
+                <p><b>simuler la partie électronique:</b></p>
+                <p>J'ai étudié et simulé la partie électronique de 
+                        conditionnement du signal issu d’une photodiode, dans le but de détecter des variations 
+                        lumineuses liées par exemple à un rythme cardiaque. Le système étudié est composé de 
+                        plusieurs blocs successifs à savoir une <b>photodiode</b>, modélisée par une source de courant 
+                        commandée, <b>un amplificateur à transistor</b>, <b>un amplificateur à AOP avec filtrage</b>, et un 
+                        <b>comparateur à hystérésis</b>. Chaque bloc a été analysé séparément afin d’observer son 
+                        comportement, ses tensions caractéristiques, ses réponses en fréquence, ainsi que les effets des 
+                        différents composants passifs (résistances, condensateurs) sur la qualité du signal.  </p>
+            </td>
+
+            <td class="resources">
+                <p><b>Logiciel :</b> <p> simulide</p> <p>Ltspice</p>
+                <p><b>Pédagogique:</b> <p>M. Duvanaud</p></p>
+            </p>
+            </td>
+            <td>
+                <p>
+                    <a href="doc/Simulation_Boubacar_DIALLO (1).pdf">Compte rendu</a>
+                </p>
+
+
+
+            </td>
+<td>
+<p>Cette partie du projet a été bien plus complexe que les précédentes, en raison du nombre de blocs impliqués et de la rigueur demandée dans l’analyse du signal. 
+       J’ai malgré tout réussi à simuler et comprendre chaque étape du conditionnement du signal issu de la photodiode. 
+       De l’amplification à la comparaison, j’ai pris le temps d’étudier les effets des composants passifs et d’optimiser les paramètres pour assurer une détection fiable des variations lumineuses. 
+       Ce travail m’a permis de renforcer mes compétences en électronique analogique et en simulation.</p>
+  
+
+  
+</td>
+
+        </tr>
+
+
+
+  <tr>
+            <td>
+                <p><b> Programmer l’ATtiny85</b></p>
+
+                <p>Cette tâche consistait à programmer l’ATtiny85 afin qu’il puisse mesurer la durée séparant deux impulsions successives
+                     issues d’un signal carré en provenance du comparateur. Ce signal représente les battements cardiaques détectés par la 
+                     chaîne de conditionnement analogique. L’objectif était de mesurer précisément l’intervalle de temps entre deux fronts du 
+                     signal (montants ou descendants), puis de convertir cette information en une donnée binaire, selon un format défini. 
+                     Cette donnée est ensuite adaptée pour une communication série UART, permettant ainsi une transmission fiable vers un
+                      système de traitement ou d’affichage</p>
+              
+            </td>
+            <td class="resources">
+                <p><b>Matérielles :</b> 
+                    <p>Ordinateur de l’IUT</p>
+                    <p>Arduino UNO et ATTiny85</p>
+                <p><b>Logiciel :</b><br> Arduino IDE</p>
+                <p><b>Pédagogique:</b><br> M DUVANAUD</p>
+            </td>
+            <td>
+                <p>
+                    <a href="doc/code complete.TXT">Code complete</a>
+                </p>
+                <p>
+                    <a href="image/schéma.jpg">Schéma</a>
+                </p>
+                <p>
+                    <a href="image/SPI_stm.png">Visualisation (CS et horloge)</a>
+                </p>
+                <p><a href="doc/video.mp4">Une video de simulation</a></p>
+            </td>
+            <td>
+                <p>J’ai rencontré un problème bloquant avec l’antivirus de mon ordinateur qui empêchait l’utilisation d’avrdude pour programmer l’ATtiny85. 
+                  Pour contourner cela, j’ai utilisé un Arduino Uno comme programmateur. Cette difficulté m’a appris à ne pas rester bloqué 
+                  face à un problème logiciel, et à chercher des solutions pratiques avec les moyens disponibles. Elle m’a aussi permis de 
+                  mieux comprendre le processus de programmation d’un microcontrôleur et les différentes méthodes pour y parvenir.</p>
+            </td>
+        </tr>
+
+
+        <tr>
+            <td>
+                <p><b> Configurer et rogrammer STM32 pour la reception et l'exploitation des données</b></p>
+
+                <p> Pour permettre la réception et l’exploitation des données envoyées à la carte STM32, j’ai d’abord configuré le
+                     microcontrôleur à l’aide de l’outil STM32CubeMX. J’ai activé l’interface UART5, conformément à l’émission déjà mise en 
+                     place sur le système distant. Après avoir sélectionné les bons paramètres de communication (4800 bauds, 9 bit de donnée 
+                     including bit de parité, parité paire.), j’ai généré le code d’initialisation automatiquement.<br>
+                     Ensuite, dans STM32CubeIDE, j’ai développé le programme permettant de recevoir les données transmises via UART5. 
+                     Une fois les données reçues, j’ai écrit un traitement spécifique afin d’extraire les informations utiles, les convertir
+                      si nécessaire, et les afficher ou les exploiter dans la suite du programme.</p>
+                
+            </td>
+            <td class="resources">
+                <p><b>Matérielles :</b> 
+                    <p>Ordinateur de l’IUT</p><p>STM32F429</p>
+            <p><b>Logiciels :</b> 
+                <p>STM32CubeMX</p><p>STM32CubeIDE</p>
+                <p><b>Pédagogique:</b><br> M. HAMDOUN et les leçons de Info3</p>
+            </td>
+            <td>
+                <p>
+                    <a href="doc/Livrable_4_SAE4_TP1_Boubacar_DIALLO.pdf">Mini livrable </a>
+                </p>
+                <p>
+                    <a href="doc/VIDEO1.mp4">Video</a>
+                </p>
+                <p>
+                   <a href="doc/video2.mp4">Video 2</a>
+                </p>
+            </td>
+            <td>
+                <p>Cette tâche m’a permis de consolider mes compétences en configuration et programmation de l’UART avec STM32. J’ai bien
+                     réussi à configurer correctement l’interface UART5 et à recevoir les données attendues. J’ai également compris comment 
+                     traiter et exploiter les données reçues dans le programme. Cette expérience m’a permis de mieux maîtriser la communication
+                      série et l’environnement STM32CubeIDE. Je suis satisfait du résultat obtenu et des connaissances acquises.</p>
+            </td>
+        </tr>
+
+
+
+        <tr>
+            <td>
+                <p><b>Reprogrammer STM32 pour convertir des données en BPM et les afficher</b></p>
+
+                <p> Après avoir mis en place la réception des données via l’interface UART5, j’ai modifié le programme afin de convertir les 
+                    données reçues en valeur de fréquence cardiaque (BPM – Battements Par Minute). J’ai développé un algorithme qui récupère 
+                    les données brutes, effectue les calculs nécessaires pour obtenir une valeur de BPM exploitable, puis l’affiche sur un 
+                    écran connecté à la carte STM32. Cette étape a nécessité une bonne compréhension du format des données reçues, ainsi 
+                    qu’une gestion correcte de l’affichage en temps réel.</p>
+                
+            </td>
+            <td class="resources">
+                <p><b>Matérielles :</b> 
+                    <p>Ordinateur de l’IUT</p>
+                    <p>La STM32</p>
+                <p><b>Logiciel :</b><br>STM32CubeMx<br>STM32CubeIDE</p>
+
+                <p><b>Pédagogique:</b><br> M HAMDOUN</p>
+            </td>
+            <td>
+                <p>
+                    <a href="image/scheStm.PNG">Accueil</a>
+                </p>
+            <p>
+                    <a href="image/scheStm.PNG">Mesure</a>
+            </p>
+
+            <p>
+                    <a href="image/scheStm.PNG">Debug</a>
+            </p>
+            <p>
+                    <a href="image/scheStm.PNG">Historique</a>
+            </p>
+               
+            </td>
+            <td>
+                <p>Cette étape de reprogrammation m’a permis de renforcer mes compétences en traitement de données et en programmation
+                     embarquée. J’ai compris l’importance de structurer le code pour assurer la fiabilité et la clarté dans la gestion des
+                      signaux reçus. Travailler sur la conversion en BPM m’a obligé à réfléchir à la logique de calcul, aux temporisations, 
+                      et à la stabilité des mesures.</p>
+            </td>
+        </tr>
+
+
+  </table>
+</table>
+
+  <div class="footer">ANALYSE PERSONNELLE</div>
+
+  <table>
+    <tr>
+      <td colspan="4">
+        <p>
+                        
+            Ce projet a été une expérience très formatrice, tant sur le plan technique que personnel. Il m’a permis d’explorer concrètement 
+            plusieurs domaines clés de ma formation en GEII : l’électronique analogique et numérique, la programmation des systèmes embarqués, 
+            la communication sans fil, ainsi que l’acquisition et le traitement de signaux biométriques. <br>
+
+            En travaillant sur la partie bracelet, j’ai compris l’importance de la précision dans la chaîne de mesure analogique, ainsi 
+            que les contraintes liées à la miniaturisation et à la faible consommation énergétique, notamment en utilisant le microcontrôleur 
+            ATTiny85. Ce choix technique m’a obligé à optimiser le code, à réfléchir à l’efficacité énergétique, et à travailler avec un espace 
+            mémoire limité — ce qui m’a beaucoup appris sur la rigueur en programmation. <br>
+
+            Du côté de la station réceptrice, la configuration du STM32 avec STM32CubeMX, puis la programmation dans STM32CubeIDE, m’a permis 
+            de développer une meilleure maîtrise des outils professionnels utilisés en industrie. J’ai particulièrement apprécié le défi de 
+            recevoir les données via UART, de les convertir en BPM, puis de les afficher de manière claire et réactive sur l’écran. Cela m’a 
+            aussi confronté à des problématiques de synchronisation, de traitement en temps réel et de structuration du code.<br>
+
+            D’un point de vue global, ce projet m’a permis de comprendre les enjeux de l’intégration complète d’un système embarqué, de la
+             mesure physique à l’affichage, en passant par la transmission sans fil. J’ai aussi pris conscience de l’importance de la 
+             communication entre les différentes parties d’un système (capteur, microcontrôleur, module radio, carte STM32), et de la 
+             cohérence globale à maintenir.<br>
+
+            Enfin, au-delà des compétences techniques, ce projet m’a aussi aidé à mieux gérer mon temps, à documenter rigoureusement mes 
+            étapes, et à développer ma capacité à chercher des solutions face aux problèmes rencontrés. Il a renforcé ma motivation à
+             travailler dans le domaine des objets connectés et de la santé, où l’électronique peut avoir un véritable impact sur la 
+             vie des gens.
+
+
+                        
+                      </p>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

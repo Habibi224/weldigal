@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+
+<head>
+  <meta charset="UTF-8">
+  <title>Mon site web pour le portfolio</title>
+
+  <!-- Feuille de style principale -->
+  <link rel="stylesheet" href="SAE4.css">
+
+  <!-- Import des polices Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Marathi:ital@0;1&display=swap" rel="stylesheet">
+</head>
+<link href="https://fonts.googleapis.com/css2?family=Vintage+Goods&display=swap" rel="stylesheet">
+
+<body>
+  <div class="header">Projet 1 (SAE5) :Réalisation d'un démonstrateur de compétences (Semestre 5)</div>
+  <table>
+    <tr>
+      <td colspan="4">
+        <p class="objective"></p>
+        <p>Ce demonstrateur de compétences présente un projet de conception et de réalisation d’un système automatisé de
+          gestion et de chronométrage pour une compétition robotique étudiante.
+          Il s’inscrit dans une démarche pédagogique visant à mettre en pratique des compétences en électronique
+          analogique, électronique numérique, programmation embarquée, systèmes communicants et
+          conception d’interfaces, tout en répondant à un besoin réel et concret dans le cadre d’événements robotique
+        </p>
+        <p>
+          L’objectif principal de ce projet est de proposer une solution simple, fiable et attractive, capable
+          d’identifier les robots, de gérer le déroulement
+          d’une course et de mesurer automatiquement leur temps de parcours. Une attention particulière a été portée à
+          l’ergonomie et à la clarté des informations
+          affichées, afin que le fonctionnement du système puisse être compris par tous, y compris par un public non
+          spécialiste. L’automatisation des étapes clés
+          de la compétition permet de limiter les erreurs humaines et d’assurer un déroulement fluide des course
+        </p>
+        <p>
+          Il repose sur l’utilisation d’un microcontrôleur ESP32, qui constitue le cœur du système. Celui-ci est associé
+          à un lecteur RFID,
+          utilisé pour identifier chaque robot à l’aide d’un badge unique attribué à son équipe, ainsi qu’à une diode
+          infrarouge permettant de détecter
+          la présence et le passage du robot sur la piste. L’ensemble du dispositif est piloté par une interface web
+          hébergée directement sur l’ESP32,
+          accessible depuis un simple navigateur web. Cette solution permet aux participants et aux visiteurs de
+          visualiser en temps réel les informations
+          de la course sur leur smartphone, tandis que le système est piloté par l’opérateur lors de la démonstration,
+          notamment dans le cadre d’une journée
+          portes ouvertes.
+        </p>
+
+        <p>
+          Le déroulement d’une course suit une logique claire et entièrement automatisée. Les participants commencent
+          par badger leur robot afin de confirmer leur présence
+          et d’autoriser le lancement de la course. Le système vérifie ensuite la présence du robot au point de départ
+          grâce à la détection infrarouge. Dès que le robot
+          se met en mouvement, le chronométrage démarre automatiquement, sans intervention humaine. À l’arrivée, le
+          passage du robot est de nouveau détecté, ce qui
+          entraîne l’arrêt du chronomètre et l’enregistrement du temps final. L’ensemble des informations identification
+          du robot, heure de badge et chronomètre est
+          affiché en temps réel sur l’interface web
+        </p>
+
+        <p>
+          Enfin, ce démonstrateur constitue une base évolutive. Une seconde phase du projet est dédiée à la
+          géolocalisation du robot à l’aide de solutions reposant
+          exclusivement sur de l’électronique analogique notamment RF. L’objectif est de localiser le robot sur la piste
+          sans recourir à des systèmes numériques,
+          afin de mieux comprendre et exploiter les principes fondamentaux de la communication sans fil (modulation,
+          amplification, filtrage...) et ne pas juste
+          utiliser des modules qui existe déja comme le wifi et RFID. Cette évolution permet d’analyser plus finement le
+          déplacement du
+          robot pendant la course et d’enrichir le système initial avec des fonctionnalités avancées, tout en conservant
+          une approche pédagogique et expérimentale.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td colspan="4" style="text-align:center; font-weight:bold; background-color:#f2f2f2;">
+        <a href="descri/descrition.pdf">Démarche de réalisation du projet</a>
+      </td>
+    </tr>
+
+    <tr>
+      <th>Tâches réalisées</th>
+      <th>Ressources utilisées</th>
+      <th>Traces</th>
+      <th>Autoévaluation</th>
+    </tr>
+
+
+
+    <tr>
+      <td>
+        <p><strong>Création de cahier de charges et journée portes ouvertes</strong></p>
+      </td>
+      <td class="resources">
+        <p>PC portable</p>
+      </td>
+
+      <td>
+        <p> <a href="doc/cahier de charges.pdf">Cahier de charges</a></p>
+      </td>
+
+      <td>
+        <p>
+          Cette etape consiste à reformuler clairement mes idées et orienté mon projet
+        </p>
+      </td>
+    </tr>
+
+
+    <tr>
+      <td>
+        <p>
+          <strong>Choisire IDE pour programmer le ESP32</strong>
+        </p>
+        <p>
+          La première étape du projet a consisté à choisir un environnement de développement (IDE) adapté à la
+          programmation de l’ESP32, en tenant compte des
+          objectifs du démonstrateur et des contraintes propres aux systèmes embarqués. Après une phase de recherche sur
+          Internet, j’ai testé plusieurs
+          plateformes de développement, notamment Arduino IDE, Thonny avec MicroPython et PlatformIO intégré à Visual
+          Studio Code.
+          Le projet étant orienté vers les systèmes embarqués et les applications communicantes, j’ai choisi de
+          privilégier les environnements utilisant le
+          langage C/C++, largement répandu dans ce domaine. Ce choix a naturellement conduit à écarter les solutions
+          basées sur MicroPython.
+        </p>
+        <p>
+          À l’issue de ces tests, PlatformIO sous Visual Studio Code a été retenu comme environnement principal. Dans un
+          premier temps, l’utilisation du framework
+          Arduino au sein de PlatformIO offre un bon compromis entre simplicité et puissance, permettant une prise en
+          main progressive de l’ESP32 tout en facilitant
+          le développement et les phases de test.
+        </p>
+
+        <p>
+          Dans une perspective d’évolution du projet, il est également envisagé d’utiliser l’ESP-IDF (Espressif IoT
+          Development Framework), l’environnement officiel
+          d’Espressif. Celui-ci permet une programmation en C pur, un contrôle plus fin du matériel et l’accès à
+          l’ensemble des fonctionnalités avancées de l’ESP32,
+          renforçant ainsi le caractère évolutif du démonstrateur
+        </p>
+
+      </td>
+
+      <td class="resources">
+        <p>Internet</p>
+        <p>PC portable</p>
+
+      </td>
+
+      <td>
+        <p><a href="https://www.upesy.fr/blogs/tutorials/esp32-quickstart-installation-programming-guide#">Vos premiers
+            pas avec une carte ESP32</a></p>
+        <p><a href="descri/rechercher.html">Comparaison avec chatgpt</a></p>
+      </td>
+
+      <td>
+        <p>
+          La démarche adoptée pour le choix de l’environnement de développement reflète ma manière générale d’aborder un
+          projet. Avant de prendre une décision technique, je commence par m’informer et comprendre le contexte, les
+          objectifs à atteindre et les contraintes existantes. Plutôt que d’opter directement pour une solution par
+          habitude, j’ai pris le temps de comparer et de tester plusieurs plateformes afin d’identifier celle qui
+          répondait le mieux aux besoins du démonstrateur.
+        </p>
+
+        <p>
+          Cette approche m’a permis de développer un regard critique sur les outils utilisés et de mieux cerner leurs
+          avantages et leurs limites. Le choix de privilégier un environnement basé sur le langage C/C++ traduit ma
+          volonté de m’inscrire dans les pratiques courantes des systèmes embarqués et de conserver une bonne maîtrise
+          du fonctionnement matériel.
+        </p>
+
+        <p>
+          De manière plus globale, cette étape illustre ma façon de travailler : avancer progressivement, valider chaque
+          choix par des essais concrets et anticiper les évolutions possibles du projet. Cette méthodologie me permet de
+          construire des solutions cohérentes, évolutives et adaptées à la fois aux exigences techniques et au cadre
+          pédagogique du démonstrateur.
+        </p>
+
+      </td>
+    </tr>
+
+
+
+
+
+
+
+
+
+
+    <tr>
+      <td>
+        <p><strong>Prise en main le ESP32 </strong></p>
+
+        <p>Pour cette première prise en main de l’ESP32-WROOM-32, j’ai suivi un <a
+            href="https://www.youtube.com/watch?v=FDFxWScKswU">tutoriel YouTube</a> pour installer PlatformIO sur Visual
+          Studio Code et créer mon premier
+          projet. J’ai testé le clignotement de la LED intégrée (GPIO2), puis exploré le brochage pour piloter d’autres
+          LEDs externes en toute sécurité.
+          Cette étape m’a surtout permis de me familiariser avec PlatformIO, l’ESP32 et le brochage des GPIO.
+        </p>
+
+        <a href="descri/description_de_prise_en_main.html">Descroption détaillée</a>
+      </td>
+      <td class="resources">
+        <p>Carte ESP32 </p>
+        <p>PC portable</p>
+        <p>Deux LEDs ( Rouge et Verte)</p>
+        <p>Deux resistance de 220 ohm</p>
+        <p>Visual Studio code </p>
+        <p><a href="doc/esp32-wroom-32e_esp32-wroom-32ue_datasheet_en.pdf">Doc</a></p>
+
+      </td>
+      <td>
+        <p><a href="image/plat4.png">projet Wizard</a></p>
+        <p><a href="Image/plat5.png">structure</a></p>
+        <p> <a href="doc/clignotter la les sur la carte.txt">Code 1</a> </p>
+        <p><a href="doc/Led_sur_la_carte.mp4">Démonstration</a></p>
+        <p> <a href="doc/code pour clignotter les led 23 et 23.txt">Code 2</a> </p>
+        <p> <a href="doc/clignottement.mp4">démonstration</a></p>
+
+      </td>
+
+      <td>
+
+        <p>
+          Cette phase de prise en main a été relativement facile à réaliser. Les ressources disponibles et la logique de
+          programmation proche de celle d’Arduino ont facilité la compréhension rapide du fonctionnement de la carte.
+          Elle m’a permis de gagner en confiance et de poser des bases solides pour aborder les étapes suivantes du
+          projet, plus complexes et plus orientées vers l’intégration de plusieurs fonctionnalités.
+        </p>
+
+      </td>
+    </tr>
+
+
+
+    <tr>
+      <td>
+        <p><b>Mettre en œuvre la communication Wi-Fi sur ESP32</b></p>
+        <p>
+          Après la prise en main du microcontrôleur ESP32, la prochaine étape du projet a consisté à étudier et
+          exploiter la communication Wi-Fi intégrée. Cette
+          fonctionnalité est essentielle dans le cadre du démonstrateur, car elle permet d’accéder à l’interface web
+          hébergée directement sur l’ESP32 et
+          d’afficher les informations de la course sur les smartphones des participants et des visiteurs.
+        </p>
+
+        <p>
+          L’objectif de cette phase était de comprendre le fonctionnement de la connexion Wi-Fi de l’ESP32, de
+          configurer le microcontrôleur afin qu’il puisse
+          communiquer de manière autonome, puis de vérifier la stabilité et la fiabilité de cette communication. Pour
+          répondre à cet objectif, j’ai configuré
+          l’ESP32 en mode <a href="https://www.youtube.com/watch?v=3fqgldXOP28"> <b>mode Point d’Accès</b>,</a>, ce qui
+          permet de créer un réseau Wi-Fi indépendant et
+          d’autoriser la connexion directe d’appareils externes,
+          tels que des téléphones ou des ordinateurs.
+        </p>
+
+        <p>
+          Une fois la connexion établie, l’ESP32 a été configuré pour agir comme un serveur web embarqué. À l’aide de la
+          bibliothèque <code>WebServer.h</code>, j’ai
+          implémenté un serveur capable de traiter des requêtes <a href="https://www.bing.com/search?q=c%27est%20quoi%20http%20protocol&qs=n&form=QBRE&sp=-1&lq=0&pq=c%27est
+                       %20quoi%20http%20protocol&sc=12-24&sk=&cvid=D9C48196460B46829CA92978985B0095">HTTP</a> et de
+          générer dynamiquement une page HTML accessible depuis un navigateur. Cette interface web permet
+          non seulement d’afficher des informations, mais également de piloter à distance certains éléments matériels,
+          comme des LEDs connectées aux GPIO de la carte.
+        </p>
+
+        <p>
+          <a href="descri/description_du_wifi_AP.html">Description détaillé</a>
+        </p>
+
+      </td>
+
+      <td class="resources">
+        <p>Carte ESP32 </p>
+        <p>PC et téléphone portable</p>
+        <p>Deux LEDs ( Rouge et Verte)</p>
+        <p>Deux resistance de 220 ohm</p>
+        <p>Visual Studio code </p>
+        <p>Internet </p>
+      </td>
+      <td>
+        <p><a href="doc/Code1_wifi.txt">Code 1</a></p>
+        <p><a href="image/le wifi.jpg">le WIFI apparait</a></p>
+        <p><a href="image/connexion.jpg">Je me suis connecté</a></p>
+        <p><a href="doc/code avec html avec boutons pour controller des led.txt">Code 2</a></p>
+        <p><a href="image/interface web.png">Interface web</a></p>
+        <p><a href="doc/demo1.mp4">Demonstration</a></p>
+      </td>
+
+      <td>
+        <p>
+          Cette étape a constitué une avancée majeure dans le projet, car elle a permis de poser les bases de
+          l’interface utilisée lors des démonstrations. Elle m’a également permis d’acquérir de nouvelles compétences
+          pratiques, notamment en configuration réseau, d’approfondir de nouvelles notions liées au fonctionnement du
+          Wi-Fi embarqué, ainsi qu’en conception d’interfaces web légères intégrées à un microcontrôleur. Ces
+          compétences ont été directement mobilisées par la suite pour l’affichage du chronométrage et le contrôle du
+          système de gestion de la course.
+        </p>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <p><b>Etudier et mettre en œuvre la communication entre l’ESP32 et le lecteur RC522.</b></p>
+        <p>Cette première étape avait pour but d’appréhender le fonctionnement du protocole RFID et de valider la
+          reconnaissance des badges d’entrée.</p>
+
+        <p>Dans un premier temps, j’ai développé un programme permettant de détecter la présence d’un badge RFID. Lors
+          du
+          passage d’une carte devant le lecteur, une LED verte s’allumait brièvement tandis que la LED rouge
+          s’éteignait,
+          fournissant un retour visuel immédiat confirmant la bonne lecture du badge.</p>
+        <p>Dans un second temps, ce comportement a été amélioré afin de renforcer la lisibilité de l’état du système. La
+          LED
+          verte reste désormais allumée après la détection d’un badge, indiquant une identification validée, puis
+          repasse à
+          l’état rouge lors d’un nouveau passage de la carte. Cette évolution permet de mieux représenter l’état logique
+          du
+          système et prépare son intégration dans un scénario de course.</p>
+        <p>Enfin, j’ai intégré une mesure du temps écoulé entre deux lectures successives du même badge. L’ESP32
+          enregistre
+          l’instant précis de la première détection, puis calcule la durée avant la seconde lecture. Ce premier
+          mécanisme de
+          chronométrage constitue une étape intermédiaire vers la gestion automatisée du temps de parcours du robot sur
+          la
+          piste. Dans cette phase, les informations étaient principalement visibles via le moniteur série, mais cette
+          logique
+          servira ensuite de base à l’affichage des données sur l’interface web dédiée au suivi des courses</p>
+
+        <p></p>
+
+        <p><a href="descri/des_RFID.html">Déscription détaillé</a></p>
+
+      </td>
+      <td class="resources">
+        <p><a href="doc/MFRC522.pdf">Datasheet du RC522</a></p>
+        <p>Carte ESP32</p>
+        <p>PC portable</p>
+        <p>VS code et PlatformIO</p>
+        <p>internet</p>
+        <p>Lecteur RFID-RC522</p>
+        <p>Des fils</p>
+        <p>Deux leds et resistance (220ohm)</p>
+      </td>
+
+      <td>
+        <p><a href="doc/Code RFID 1 pour clignotter la led.txt">Code 1</a></p>
+        <p><a href="doc/demo detection.mp4">Demonstration</a></p>
+        <p><a href="doc/Code 2 RFID avec le toggle des leds.txt">Code2</a></p>
+        <p><a href="doc/demo.mp4">Demonstration</a></p>
+        <p><a href="doc/code 3 finale.txt">Code 3 finale</a></p>
+        <p><a href="doc/demo_finale.mp4">Demonstration</a></p>
+      </td>
+
+
+      <td>
+
+        <p>Au début de cette activité, j’ai rencontré plusieurs difficultés, notamment lors de mes premières tentatives
+          de
+          communication entre l’ESP32 et le lecteur RFID RC522. J’ai initialement essayé de mettre en œuvre la
+          communication
+          en utilisant le protocole I2C, mais malgré plusieurs essais et ajustements, je n’ai pas obtenu de résultats
+          exploitables. Cette phase a été source de blocage et m’a obligé à prendre du recul sur mon approche.</p>
+        <p>Afin de dépasser cette difficulté et de faire avancer le projet, j’ai analysé la documentation technique du
+          module
+          RC522 ainsi que différents retours d’expérience. Cette démarche m’a permis de comprendre que le protocole SPI
+          est le
+          mode de communication le plus couramment utilisé et le plus stable pour ce type de lecteur RFID. En me
+          réorientant
+          vers cette solution, j’ai pu établir une communication fonctionnelle entre le lecteur et l’ESP32.</p>
+        <p>Cette expérience m’a appris l’importance de ne pas rester bloqué sur une première hypothèse technique et de
+          savoir
+          adapter mes choix en fonction des contraintes réelles du matériel. Elle m’a également permis de renforcer mes
+          compétences en lecture de documentation, en compréhension des protocoles de communication et en résolution de
+          problèmes.</p>
+      </td>
+    </tr>
+
+
+
+
+    <tr>
+      <td>
+        <p><strong>Récupérer les UID des cartes et attribuer à chaque carte un nom</strong></p>
+        <p>Cette activité s’inscrit dans la continuité directe du travail réalisé sur la communication RFID entre
+          l’ESP32 et
+          le lecteur RC522. Après avoir validé la lecture fiable des badges, l’objectif a été d’exploiter ces
+          informations
+          afin d’identifier de manière unique chaque robot participant à la course.</p>
+        <p>Pour cela, j’ai développé un programme permettant de récupérer l’UID de chaque carte RFID. Le lecteur RC522,
+          connecté à l’ESP32 via l’interface SPI, est initialisé au démarrage du système puis surveille en continu la
+          présence d’un badge. Lorsqu’une carte est détectée, son UID est lu octet par octet et affiché sur le moniteur
+          série. Cette étape permet d’identifier précisément chaque carte et de vérifier son unicité.</p>
+        <p>Une fois l’ensemble des UID collectés, j’ai mis en place un mécanisme d’association entre chaque carte et un
+          nom
+          de robot. Chaque UID est ainsi lié à un identifiant lisible (par exemple : alpha, beta, gamma, etc.),
+          facilitant
+          l’affichage des informations sur l’interface web et la compréhension du système par les utilisateurs. Cette
+          association garantit qu’un badge correspond à un seul robot, ce qui améliore la fiabilité du pointage et
+          simplifie
+          la gestion des équipes avant le lancement des courses.</p>
+      </td>
+
+      <td class="resources">
+        <p>PC portable</p>
+        <p>VS code et PlatformIO</p>
+        <p>internet</p>
+        <p>Lecteur RFID-RC522</p>
+      </td>
+
+      <td>
+        <p><a href="doc/Code pour lire le IUD des carte.txt">Code pour IUD</a></p>
+        <p><a href="doc/IUD.png">IUD des carte</a></p>
+        <p><a href="doc/code pour attrubuer chaque cart un nom.txt">Code2</a></p>
+        <p><a href="doc/attribuer chaque carte un nom.jpg">Nom des carte</a></p>
+      </td>
+
+      <td>
+        <p>J’ai réussi à mettre à recuperer les UID des cartes RFID et à les associer à un nom de robot.
+          Cette solution permet d’identifier correctement chaque robot pendant la course et répond aux besoins
+          principaux du projet. Le système est fonctionnel, fiable et compréhensible pour les utilisateurs.</p>
+
+        <p>À l’origine, j’avais prévu d’aller plus loin en utilisant une base de données afin d’enregistrer les joueurs
+          et les robots avant la course, via une interface dédiée. Cependant, cette fonctionnalité nécessitait des
+          compétences supplémentaires en bases de données, en développement web côté serveur et en gestion des échanges
+          réseau. Compte tenu du temps limité et de la charge globale du projet, je n’ai pas pu mettre en œuvre cette
+          partie.</p>
+        <p>J’ai donc fait le choix de privilégier une solution plus simple mais maîtrisée, afin d’assurer le bon
+          fonctionnement du système existant. Cette amélioration reste une piste d’évolution possible si le projet
+          devait être poursuivi.</p>
+      </td>
+    </tr>
+
+
+
+    <tr>
+      <td>
+        <p><strong>Création d'une interface web pour la gestion du plateforme</strong></p>
+        <p>Dans cette étape, j’ai conçu et implémenté une interface web embarquée sur l’ESP32 permettant de gérer
+          l’ensemble du processus de la compétition robotique.
+          Cette interface constitue le point central de supervision et d’interaction avec le système. Elle permet de
+          demander aux deux participants de s’identifier en badgant leur carte RFID. Lors du passage
+          d’un badge, l’ESP32 récupère l’UID de la carte,
+          l’associe au robot correspondant, puis transmet l'information à la page web où le nom du robot est
+          automatiquement affiché.</p>
+
+        <p>L’interface propose également des commandes de contrôle du déroulement de la course, notamment le
+          déclenchement du départ et la mise en pause, ainsi qu’un affichage
+          en temps réel des informations relatives à l'épreuve.</p>
+
+      </td>
+      <td class="resources">
+        <p>PC portable</p>
+        <p>VS code</p>
+        <p>internet</p>
+      </td>
+
+      <td>
+        <p> <a href="doc/page.html">Interface web</a></p>
+      </td>
+
+      <td>
+        <p>Auto</p>
+      </td>
+    </tr>
+
+
+
+    <tr>
+      <td>
+        <p><strong>Intégrer le RFID avec l’interface web et contrôle de l’activation du pointage</strong></p>
+        <p>Après avoir mis en place l’interface web embarquée sur l’ESP32 et associé chaque badge RFID à un nom de
+          robot,
+          cette nouvelle activité vise à relier directement la lecture RFID à l’interface web et à contrôler
+          explicitement
+          les phases de pointage.</p>
+        <p>Le principe est le suivant : avant toute lecture de badge, l’utilisateur doit appuyer sur le bouton
+          "commencer" sur
+          l’interface web. Ce bouton active le lecteur RFID et allume une LED connectée au GPIO2, indiquant visuellement
+          que le système est prêt à recevoir un badge.
+        </p>
+        <p>Enfin, le bouton « Start » présent sur la page web permet de désactiver le lecteur RFID. Cette action coupe
+          la
+          phase de pointage, empêche toute nouvelle lecture de badge et marque la fin de l’identification des
+          participants
+          avant le début de la course. Le led est alors étiente et tant que cette LED est éteinte, aucune lecture RFID
+          n’est prise en
+          compte.</p>
+
+      </td>
+
+      <td class="resources">
+        <p>PC portable</p>
+
+      </td>
+
+      <td>
+        <p> <a href="doc/code rfid avec les bouton commencer, play et plus.txt">code</a></p>
+        <p> <a href="video/video.mp4">Demonstration</a></p>
+      </td>
+
+      <td>
+        <p>Cette activité marque le véritable début du projet dans sa forme finale. Même si plusieurs bases techniques
+          avaient
+          déjà été mises en place en amont, c’est à partir de cette étape que le système commence à fonctionner comme un
+          ensemble cohérent, avec une logique proche de celle attendue lors des démonstrations réelles.</p>
+        <p>Cette étape m’a permis de passer d’une approche expérimentale à une approche plus structurée, orientée vers
+          l’usage
+          final du démonstrateur. Elle m’a également amené à réfléchir à la fiabilité du système, notamment en évitant
+          les
+          lectures intempestives de badges et en imposant des phases clairement définies. Ce travail constitue ainsi une
+          base
+          solide pour la suite du projet, notamment pour l’automatisation du déroulement de la course et l’affichage des
+          résultats.</p>
+
+
+      </td>
+    </tr>
+
+
+
+
+
+    <tr>
+      <td>
+        <p><strong>Concevoir un capteur pour détecter un robot</strong></p>
+        <p>L’objectif de ce projet est de détecter la présence ou l’absence d’un robot à l’aide d’un capteur infrarouge
+          fonctionnant par réflexion. Le système repose sur l’émission d’un signal infrarouge modulé et sur l’analyse du
+          signal réfléchi.</p>
+        <p>Une LED infrarouge, pilotée par un ESP32, émet un signal modulé à 1 kHz. Lorsque le robot se trouve en face
+          du capteur, une partie de ce signal est réfléchie vers une photodiode. Le courant
+          généré par celle-ci est ensuite amplifié et mis en forme afin d’obtenir un signal logique exploitable par
+          l’ESP32.
+        </p>
+        <p>En mesurant la fréquence du signal reçu, l’ESP32 détermine la présence du robot. Une fréquence proche de 1
+          kHz indique que le
+          robot est détecté, tandis que si la differece est significatif correspond à l’absence du robot.</p>
+        <p><a href="descri/Capteur.html">Déscription de la conception de ce Capteur</a></p>
+
+      </td>
+
+      <td class="resources">
+        <p>PC portable</p>
+         <p>Internet</p>
+        <p> <a
+            href=" https://forelectronics.wordpress.com/2020/05/28/ir-photo-diode-sensor/?utm_source=chatgpt.com">Site</a>
+        </p>
+        <p> <a
+            href=" https://www.electronicsforu.com/technology-trends/learn-electronics/ir-led-infrared-sensor-basics?utm_source=chatgpt.com">Site</a>
+        </p>
+       
+        <p><a href="descri/doc/LD271.PDF">Une Led infrarouge</a></p>
+        <p><a href="descri/doc/bp104.pdf">Une photodiode</a></p>
+        <p><a href="descri/doc/TL082.PDF">Un ampli TL082</a></p>
+        <p><a href="descri/doc/2N2219A.PDF">Un transistor</a></p>
+        <p><a href="descri/doc/Compte rendu Transmission.pdf">TP Elen</a></p>
+      </td>
+
+      <td>
+        <p>--Emission--</p>
+        <p> <a href="descri/Image/cablage.jpg">schéma</a></p>
+        <p> <a href="descri/Image/F0000TEK.BMP">Visualisation sur l'oscillo</a></p>
+        <p>--Reception--</p>
+        <p> <a href="descri/Image/schéma2.jpg">schéma</a></p>
+        <p> <a href="descri/Image/F0003TEK.BMP">Avant reflexion</a></p>
+        <p> <a href="descri/Image/F0006TEK.BMP">Après reflexion</a></p>
+        <p> <a href="video/desmo.mp4">Démonstration</a></p>
+
+      </td>
+
+      <td>
+        <p>Auto</p>
+      </td>
+    </tr>
+
+
+
+
+    <tr>
+      <td>
+        <p><strong>Intégration du capteur infrarouge et automatisation du déroulement de la course</strong></p>
+        <p>Cette activité s’inscrit dans la continuité directe des travaux précédents et vise à intégrer la détection
+          physique du robot dans la logique globale du système et dans l’interface web. Après l’identification des
+          participants par RFID, l’objectif est désormais d’automatiser la détection du robot sur la piste et le
+          déclenchement du chronométrage.</p>
+        <p>Lorsque l’utilisateur appuie sur le bouton Start de l’interface web, le système change de mode de
+          fonctionnement.
+          Le lecteur RFID est alors désactivé afin d’empêcher toute nouvelle identification, et le capteur infrarouge de
+          présence est activé. Ce capteur repose sur une détection par réflexion infrarouge modulée, permettant de
+          déterminer si le robot est présent ou non sur la ligne de départ.
+        </p>
+        <p>Dans le cas simplifié d’une course en solo, la présence du robot est signalée par l’allumage d’une LED
+          connectée
+          au GPIO37, confirmant visuellement que le robot est correctement positionné sur la piste. Tant que le robot
+          est
+          détecté, la LED reste allumée. Dès que le robot commence à se déplacer, il n’est plus détecté par le capteur :
+          la
+          LED s’éteint et le chronométrage démarre automatiquement. Lors de la prochaine détection du robot (arrivée),
+          la
+          LED se rallume et le système calcule le temps écoulé entre le départ et l’arrivée, puis affiche ce résultat
+          dans
+          un tableau sur l’interface web.</p>
+        <p>L’interface web intègre également des boutons de gestion globale du système. Le bouton Reset permet d’effacer
+          toutes les informations en cours (identité du robot, temps mesurés, état du système), tandis que le bouton
+          Restart
+          permet de relancer une nouvelle course sans redémarrer l’ESP32.</p>
+
+      </td>
+
+      <td class="resources">
+        <p>PC portable</p>
+        
+      </td>
+
+      <td>
+        <p> <a href="doc/code 1 PWM et mesure de la fréquence.txt">Mesurer la fréquence</a></p>
+        <p> <a href="image/mesurer fréque.jpg">Mesurer la fréquence</a></p>
+
+      </td>
+      <td>
+        <p>Cette partie du projet a été l’une des plus complexes à mettre en œuvre. Elle m’a confronté à la gestion
+          simultanée
+          de plusieurs sous-systèmes : la lecture RFID, le capteur infrarouge analogique, l’interface web et la logique
+          de
+          chronométrage. Contrairement aux étapes précédentes, il ne s’agissait plus de tester des fonctionnalités
+          isolées,
+          mais de les faire cohabiter de manière cohérente et fiable au sein d’un même programme.</p>
+        <p>J’ai rencontré des difficultés notamment dans la gestion des états du système, en particulier pour activer et
+          désactiver correctement le RFID et le capteur en fonction des actions de l’utilisateur sur l’interface web. À
+          un
+          moment du projet, face à la complexité croissante du code, j’ai même envisagé de changer d’environnement de
+          développement. Finalement, en réorganisant la structure du programme et en mettant en place une logique claire
+          d’activation et de désactivation des modules, j’ai réussi à stabiliser le fonctionnement sans changer d’IDE.
+        </p>
+        <p>Un autre point délicat a été la définition du rôle des boutons de l’interface web. Au départ, leur utilité
+          n’était
+          pas clairement définie, ce qui rendait le comportement du système confus.</p>
+
+      </td>
+    </tr>
+
+
+
+  </table>
+
+  <div class="footer">ANALYSE PERSONNELLE</div>
+  <table>
+    <tr>
+      <td colspan="4">
+        <p>
+          nhjjj
+        </p>
+      </td>
+    </tr>
+  </table>
+</body>
+
+</html>

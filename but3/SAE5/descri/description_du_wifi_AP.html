@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prise en main ESP32</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    h1,
+    h2,
+    h3 {
+      color: #2c3e50;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      margin-top: 30px;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 5px;
+    }
+
+    p {
+      margin-bottom: 15px;
+    }
+
+    code {
+      display: block;
+      background-color: #ecf0f1;
+      padding: 10px;
+      margin: 10px 0;
+      border-left: 4px solid #3498db;
+      white-space: pre-wrap;
+    }
+
+    ul {
+      margin-left: 20px;
+    }
+
+    .note {
+      font-style: italic;
+      color: #7f8c8d;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Développer une interface web de contrôle via Wi-Fi sur ESP32</h1>
+
+  <h2>Introduction de cette activité</h2>
+  <p>
+    Cette activité a pour objectif d’exploiter les fonctionnalités Wi-Fi de la carte ESP32, largement utilisée dans les
+    systèmes embarqués et les applications de l’Internet des Objets (IoT). Afin de structurer la démarche, il est
+    nécessaire d’aborder le sujet en plusieurs étapes.
+  </p>
+  <p>
+    Dans un premier temps, il convient d’étudier le fonctionnement global du Wi-Fi afin de comprendre les principes
+    fondamentaux de cette technologie de communication sans fil, tels que l’établissement d’une connexion, l’adressage
+    et l’échange de données. Par la suite, l’analyse sera recentrée sur l’ESP32 afin d’examiner ses capacités Wi-Fi
+    spécifiques, ses modes de fonctionnement (Station, Point d’Accès, ou mixte) ainsi que la manière dont ces modes
+    peuvent être exploités pour mon projet.
+  </p>
+  <p>
+    Enfin, une mise en application concrète sera réalisée sous la forme d’une communication Wi-Fi entre un utilisateur
+    et l’ESP32, permettant le contrôle d’une LED à distance. Cette étape nécessite la compréhension et la mise en œuvre
+    de notions liées aux serveurs web et requêtes HTTP, qui assurent le transport et la gestion des informations
+    échangées entre l’appareil client (smartphone, ordinateur) et la carte ESP32.
+  </p>
+  <p>
+    Ainsi, cette activité combine une approche théorique sur les bases du Wi-Fi et une application pratique visant à
+    démontrer le potentiel de l’ESP32 pour développer des systèmes interactifs et autonomes.
+  </p>
+
+  <h2>Fonctionnement global d’un Wi-Fi</h2>
+  <p>
+    Le Wi-Fi (Wireless Fidelity) est une technologie de communication sans fil basée sur les normes IEEE 802.11. Elle
+    permet à des appareils (ordinateurs, smartphones, objets connectés) de se relier à un réseau local (WLAN) ou à
+    Internet sans utiliser de câbles, en transmettant des données par ondes radio.
+  </p>
+  <p>
+    Le Wi-Fi repose sur un émetteur (souvent un routeur ou un point d’accès) et un récepteur (la carte Wi-Fi intégrée
+    dans l’appareil). Le routeur diffuse un signal radio sur les bandes de 2,4 GHz et/ou 5 GHz, et chaque appareil capte
+    ce signal pour échanger des données. Les informations sont envoyées sous forme de paquets identifiés par des
+    adresses uniques (adresses MAC et IP) afin que chaque appareil reçoive uniquement les données qui lui sont
+    destinées.
+  </p>
+  <p>Un réseau Wi-Fi peut donc accueillir plusieurs utilisateurs simultanément. Le routeur gère cette communication
+    grâce à des techniques de multiplexage et de partage du canal radio, en attribuant à chaque appareil un temps
+    d’accès ou une fréquence spécifique. Ainsi, même si plusieurs utilisateurs partagent le même point d’accès, les
+    données envoyées et reçues sont correctement acheminées vers le destinataire grâce aux mécanismes d’adressage et de
+    routage.</p>
+  <p>
+    La sécurité du Wi-Fi repose sur des protocoles de chiffrement qui ont évolué au fil du temps :
+  </p>
+  <ul>
+    <li>WEP (obsolète et vulnérable)</li>
+    <li>WPA puis WPA2 avec chiffrement AES</li>
+    <li>WPA3 (actuel), offrant une meilleure résistance aux attaques et une sécurisation renforcée</li>
+  </ul>
+  <p>La protection repose également sur l’usage de mots de passe robustes, la mise à jour régulière du firmware du
+    routeur et éventuellement des mécanismes comme le filtrage d’adresses MAC.</p>
+
+  <p class="note">Sources :</p>
+  <div style="display: flex; justify-content: center; align-items: center;">
+    <div
+      style="position: relative; width: 100%; max-width: 800px; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+      <iframe src="https://www.youtube.com/embed/HAZMZsKVneY" title="YouTube video player" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen
+        style="position: absolute; top:0; left:0; width:100%; height:100%;">
+      </iframe>
+    </div>
+  </div>
+  <br>
+
+  <p>Pour plus d'infomation: <br><a href="https://critiqueplus.com/reseau-wi-fi/">Réseau Wi-Fi </a> <br><a
+      href="https://www.annecy-hardware.com/tout-savoir-sur-le-wifi-definition-fonctionnement-et-conseils-pratiques/">Tout
+      savoir sur le Wifi</a> <br><a
+      href="https://www.malekal.com/la-connexion-sans-fil-wifi-comment-ca-marche-et-le-dossier/">La connexion sans fil –
+      Wi-Fi : comment ça marche</a></p>
+
+
+
+
+
+  <h2>Fonctionnement du Wi-Fi sur l’ESP32</h2>
+  <p>
+    L’ESP32 intègre un module Wi-Fi conforme à la norme 802.11 b/g/n, ce qui lui permet de communiquer sans fil avec
+    différents types de périphériques. Dans l’environnement Arduino, la gestion de cette connectivité est assurée par la
+    bibliothèque WiFi.h, qui fournit les outils nécessaires pour configurer, contrôler et surveiller les connexions
+    réseau. Il peut fonctionner en 3 modes :</p>
+
+  <ul>
+    <li><b>Station (WIFI_STA)</b> : la carte agit comme un client Wi-Fi et se connecte à un point d’accès existant
+      (routeur, box Internet, partage de connexion mobile). Elle peut alors accéder à Internet ou échanger des données
+      avec d’autres appareils du même réseau..</li>
+    <li><b>Point d’Accès (WIFI_AP)</b> : l’ESP32 crée son propre réseau local et permet à d’autres appareils (PC,
+      smartphone, ESP32) de s’y connecter directement. Ce mode ne donne pas accès à Internet, mais il est
+      particulièrement adapté aux applications de configuration locale ou de contrôle direct.</li>
+    <li><b>Mixte (WIFI_AP_STA)</b> : : l’ESP32 combine les deux précédents, en se connectant à un réseau externe tout en
+      offrant simultanément son propre point d’accès. Ce mode hybride est particulièrement utile lorsqu’il est
+      nécessaire de conserver un accès à Internet tout en maintenant une interface locale pour des périphériques
+      connectés directement à l’ESP32..</li>
+  </ul>
+  <p>La mise en œuvre du wifi repose sur deux bibliothèques principales : WiFi.h, qui assure la gestion des connexions
+    sans fil, et WebServer.h, qui permet de créer un serveur HTTP léger intégré au microcontrôleur. Ce serveur rend
+    possible l’affichage d’une interface web et le traitement des requêtes des clients connectés. </p>
+  <p>
+  <p class="note">Sources complémentaires :</p>
+
+  <!-- Vidéo intégrée centrée et plus petite -->
+  <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 20px;">
+    <div
+      style="position: relative; width: 100%; max-width: 600px; padding-bottom: 33.25%; height: 0; overflow: hidden;">
+      <iframe src="https://www.youtube.com/embed/3fqgldXOP28"
+        title="#3 Utiliser ESP32 comme point d'accès à internet (vidéo afficher)" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen
+        style="position: absolute; top:0; left:0; width:100%; height:100%;">
+      </iframe>
+    </div>
+  </div>
+
+  <!-- Liens cliquables -->
+  <ul>
+    <li>
+      <a href="https://www.bing.com/search?q=comment%20fonctionne%20Wi-Fi%20avec%20l%E2%80%99ESP32&qs=n&form=QBRE&sp=-1&lq=0&pq=comment%20fonctionne%20wi-fi%20avec%20l%E2%80%99esp32&sc=12-37&sk=&cvid=35DA75424A3B4B4E8BC01DF38E026862"
+        target="_blank">
+        comment fonctionne Wi-Fi avec l’ESP32 - Recherche
+      </a>
+    </li>
+    <li>
+      <a href="https://www.raspberryme.com/fonctions-utiles-de-la-bibliotheque-wi-fi-esp32-arduino-ide/"
+        target="_blank">
+        Fonctions utiles de la bibliothèque Wi-Fi ESP32 (Arduino IDE)
+      </a>
+    </li>
+  </ul>
+  </p>
+
+  <h2>Notion du serveur web et requêtes HTTP avec l’ESP32</h2>
+  <p>
+    Un serveur web est un système informatique, matériel ou logiciel, chargé de répondre aux demandes des clients
+    (navigateurs ou applications) en utilisant le protocole HTTP. Lorsqu’un utilisateur saisit une adresse (comme
+    http://192.168.1.10 ou www.google.com) dans son navigateur, celui-ci envoie une requête HTTP au serveur. Cette
+    requête correspond à une question ou une demande de ressource (une page web, une image, une donnée..). Le serveur
+    traite alors la requête et renvoie une réponse, le plus souvent sous forme d’une page HTML, CSS ou JavaScript. Si la
+    ressource n’existe pas, le serveur répond tout de même mais avec un code d’erreur (par exemple 404 Not Found). </p>
+  <p>
+    Dans le cas de l’ESP32, ce microcontrôleur peut être configuré pour jouer le rôle de serveur web grâce à la
+    bibliothèque WebServer.h. Une fois connecté en Wi-Fi, il est capable d’héberger une petite page HTML, crée par le
+    programmeur. Cette page est alors accessible depuis tout appareil connecté au réseau wifi de l’ESP32.
+  </p>
+  <p>
+    Lorsqu’un utilisateur interagit avec cette interface crée par le programmeur, par exemple en cliquant sur un bouton
+    "Allumer LED", le navigateur envoie une requête HTTP vers l’ESP32. Ce dernier analyse l’URL ou les données reçues,
+    exécute l’action correspondante comme activer une sortie GPIO, puis renvoie une réponse au client. La réponse peut
+    une mise à jour d’information ou une simple confirmation.
+  </p>
+  <p>
+    Ainsi, l’ESP32 remplit un double rôle : d’une part, il agit comme serveur web, en fournissant une interface
+    utilisateur via une page HTML, et d’autre part, il reste un contrôleur matériel, en traduisant les requêtes reçues
+    en actions physiques sur ses périphériques. Cela permet de créer des applications locales simples, comme le pilotage
+    d’une LED ou l’affichage en temps réel de données issues de capteurs.
+  </p>
+  <p>
+  <p class="note">Sources complémentaires :</p>
+  <p>
+    <a href="https://www.hostinger.com/fr/tutoriels/serveur-web">Qu’est ce qu’un Serveur Web et Comment ça Marche ?</a>
+  </p>
+  <p>
+    <a href="https://leadeusesduweb.com/serveur-web-fonctionnement/">Qu’est-ce qu’un serveur web et comment
+      fonctionne-t-il</a>
+  </p>
+  <p>
+    <a href="https://www.raspberryme.com/construire-un-serveur-web-esp32-le-guide-complet-pour-les-debutants/">Construire
+      un serveur Web ESP32: le guide complet pour les débutants</a>
+  </p>
+
+  <h2>Mise en œuvre du Wi-Fi en mode Point d’Accès</h2>
+
+
+  <div class="section">
+    <p>Dans le cadre de cette activité, l’ESP32 a été configuré en mode Point d’Accès (WIFI_AP). Ce choix a pour
+      objectif de créer un réseau Wi-Fi autonome, sans dépendre d’un routeur ou d’une connexion Internet. Ainsi, tout
+      appareil équipé du Wi-Fi (ordinateur, smartphone ou autre ESP32) peut se connecter directement au réseau généré
+      par la carte.</p>
+
+    <p>Le premier programme a pour but de vérifier que l’ESP32 est bien capable de générer son propre point d’accès et
+      de répondre à des requêtes HTTP simples :</p>
+
+    <pre><code>#include &lt;WiFi.h&gt;        // Bibliothèque pour gérer le WiFi de l’ESP32
+#include &lt;WebServer.h&gt;   // Bibliothèque pour créer un serveur web
+
+const char* ssid = "Bouba";         // Nom du réseau Wi-Fi créé par l’ESP32
+const char* password = "Diallo12345"; // Mot de passe du réseau
+
+// Création d’un serveur web sur le port 80 (port par défaut de HTTP)
+WebServer server(80);
+
+// Fonction qui génère la page d’accueil
+void handleRoot() {
+  server.send(200, "text/html", "&lt;h1&gt;Ouais, j'ai reussi la connexion WiFi&lt;/h1&gt;");
+}
+
+void setup() {
+  delay(1500);                 // Petite pause : l’ESP32 a besoin de temps au démarrage
+
+  WiFi.mode(WIFI_AP);          // Activation du mode Point d’Accès (AP)
+  WiFi.softAP(ssid, password); // Création du réseau Wi-Fi avec nom et mot de passe
+
+  delay(500);                  // Pause pour laisser le temps à l’ESP32 de bien initialiser le Wi-Fi
+
+  server.on("/", handleRoot);  // Quand un client va sur "/", on appelle handleRoot()
+  server.begin();              // Démarrage du serveur web
+}
+
+void loop() {
+  server.handleClient(); // Vérifie en permanence si un client envoie une requête HTTP
+}</code></pre>
+
+    <p>Ici, l’objectif est simplement de créer un réseau Wi-Fi et de vérifier qu’on peut accéder à l’ESP32 depuis un
+      navigateur. Quand on tape l’adresse IP de l’ESP32 (192.168.4.1), la page affiche un message de confirmation.</p>
+    <div
+      style="display: flex; justify-content: space-between; align-items: flex-start; max-width: 800px; margin: 20px auto; background-color: #2f94d7; padding: 20px; gap: 20px;">
+      <img src="Image/le wifi.jpg" alt="Le Wi-Fi" style="max-width:48%; height:auto;">
+      <img src="Image/connexion.jpg" alt="Connexion" style="max-width:48%; height:auto;">
+    </div><br>
+
+
+
+
+
+
+    <div class="section">
+      <p>Dans ce programme, l’ESP32 génère une page web interactive avec des boutons permettant de contrôler deux LEDs :
+      </p>
+
+      <pre><code>#include &lt;WiFi.h&gt;
+#include &lt;WebServer.h&gt;
+
+// Nom et mot de passe du Wi-Fi créé par l’ESP32
+const char* ssid = "Bouba";
+const char* password = "Diallo12345";
+
+// Serveur web sur le port 80
+WebServer server(80);
+
+// Broches utilisées pour les LEDs
+const int ledRouge = 22;
+const int ledVerte = 23;
+
+// Fonction qui crée la page web avec les boutons
+void handleRoot() {
+  String page = "&lt;!DOCTYPE html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset='utf-8'&gt;&lt;title&gt;LED ESP32&lt;/title&gt;&lt;/head&gt;&lt;body&gt;";
+  page += "&lt;h1&gt;Contrôle LEDs 🚦&lt;/h1&gt;";
+  page += "&lt;p&gt;&lt;a href='/rougeOn'&gt;&lt;button&gt;Allumer Rouge 🔴&lt;/button&gt;&lt;/a&gt;";
+  page += "&lt;a href='/rougeOff'&gt;&lt;button&gt;Éteindre Rouge ⚫&lt;/button&gt;&lt;/a&gt;&lt;/p&gt;";
+  page += "&lt;p&gt;&lt;a href='/verteOn'&gt;&lt;button&gt;Allumer Vert 🟢&lt;/button&gt;&lt;/a&gt;";
+  page += "&lt;a href='/verteOff'&gt;&lt;button&gt;Éteindre Vert ⚫&lt;/button&gt;&lt;/a&gt;&lt;/p&gt;";
+  page += "&lt;/body&gt;&lt;/html&gt;";
+  
+  // Envoie de la page HTML au client
+  server.send(200, "text/html", page);
+}
+
+void setup() {
+  // Configuration des broches comme sorties
+  pinMode(ledRouge, OUTPUT);
+  pinMode(ledVerte, OUTPUT);
+
+  delay(1500);                // Pause avant d’activer le Wi-Fi
+  WiFi.mode(WIFI_AP);         // Mode Point d’Accès
+  WiFi.softAP(ssid, password);// Création du réseau Wi-Fi
+
+  // Définition des routes HTTP
+  server.on("/", handleRoot); 
+  server.on("/rougeOn", [](){ digitalWrite(ledRouge, HIGH); handleRoot(); });
+  server.on("/rougeOff", [](){ digitalWrite(ledRouge, LOW); handleRoot(); });
+  server.on("/verteOn", [](){ digitalWrite(ledVerte, HIGH); handleRoot(); });
+  server.on("/verteOff", [](){ digitalWrite(ledVerte, LOW); handleRoot(); });
+
+  server.begin();             // Démarrage du serveur web
+}
+
+void loop() {
+  server.handleClient(); // Vérifie et traite en continu les requêtes HTTP
+}
+</code></pre>
+
+      <p>Chaque bouton correspond à une requête HTTP (/rougeOn, /rougeOff, /verteOn, /verteOff). Quand l’utilisateur
+        clique, l’ESP32 exécute l’action correspondante (allumer/éteindre une LED) et recharge la page.</p>
+    </div>
+
+
+    <div
+      style="display: flex; justify-content: space-between; align-items: flex-start; max-width: 800px; margin: 20px auto; background-color: #2f94d7; padding: 20px; gap: 20px;">
+      <img src="Image/interface web.png" alt="Interface Web" style="max-width:48%; height:auto;">
+      <video src="Image/demo.mp4" style="max-width:48%; height:auto;" controls></video>
+    </div>
+    <br>
+
+
+
+    <h2>Conclusion et analyse personnelle</h2>
+    <p>
+      Cette activité m’a permis de mieux comprendre le fonctionnement du Wi-Fi, non seulement de manière générale, mais
+      aussi de façon concrète à travers la mise en œuvre sur l’ESP32. J’ai appris à configurer la carte en mode Point
+      d’Accès, à mettre en place un serveur web embarqué, et à gérer des requêtes HTTP permettant le contrôle de
+      périphériques simples comme des LEDs. </p>
+    <p>
+      Sur le plan technique, cette expérience a montré qu’il est possible de réaliser une communication locale et
+      autonome entre différents appareils sans dépendre d’un routeur ou d’une connexion Internet. Elle constitue donc
+      une base solide pour développer des applications plus avancées en domotique et en IoT. </p>
+    <p>
+      D’un point de vue personnel, cette activité a réellement renforcé mon intérêt pour les communications sans fil. La
+      simplicité avec laquelle il est possible de créer une interface web accessible depuis n’importe quel appareil
+      connecté m’a particulièrement séduit. Elle ouvre de nombreuses perspectives et me motive à approfondir mes
+      connaissances, notamment dans la gestion des serveurs web, l’optimisation des échanges de données, et
+      l’interconnexion de plusieurs objets connectés. </p>
+
+</body>
+
+</html>

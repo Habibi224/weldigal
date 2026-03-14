@@ -1,0 +1,54 @@
+#include SPI.h     // Bibliothèque qui gère le bus SPI de l’ESP32 (SCK, MOSI, MISO)
+#include MFRC522.h
+
+// Pins RC522 (SPI)
+#define SS_PIN   5
+#define RST_PIN  33
+
+// LEDs
+#define LED_OK   25   // LED verte (ON après badge)
+#define LED_NO   27   // LED rouge (OFF après badge)
+
+MFRC522 mfrc522(SS_PIN, RST_PIN);
+
+// Variable d'état
+bool ledState = false;  // false = rouge ON, true = vert ON
+
+void setup() {
+  Serial.begin(115200);
+  SPI.begin(); 
+  mfrc522.PCD_Init();
+
+  pinMode(LED_OK, OUTPUT);
+  pinMode(LED_NO, OUTPUT);
+
+  // État initial
+  digitalWrite(LED_OK, LOW);
+  digitalWrite(LED_NO, HIGH);
+
+  Serial.println("Approche une carte RFID...");
+}
+
+void loop() {
+  // Vérifie si une nouvelle carte est présente
+  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
+    // Toggle de l'état
+    ledState = !ledState;
+
+    if (ledState=true) {
+      // LED verte allumée
+      digitalWrite(LED_OK, HIGH);
+      digitalWrite(LED_NO, LOW);
+    } else {
+      // Retour LED rouge
+      digitalWrite(LED_OK, LOW);
+      digitalWrite(LED_NO, HIGH);
+    }
+
+
+    // Bonne pratique : fin de com
+    mfrc522.PICC_HaltA();
+    mfrc522.PCD_StopCrypto1();
+    delay(1000); // Anti-rebond pour éviter plusieurs toggles d'un coup
+  }
+}
