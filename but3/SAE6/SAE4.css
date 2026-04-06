@@ -1,0 +1,96 @@
+/* style.css */
+
+@font-face {
+  font-family: 'Higuen';
+  src: url('style/Higuen-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Higuen';
+  src: url('style/Vintage\ Goods.ttf') format('truetype');
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #ffffff;
+  color: #000000;
+  margin: 0;
+  padding: 0;
+}
+
+.header, .footer {
+  background-color: #000000;
+  color: #b3571e;
+  text-align: center;
+  font-size: 38px;
+  padding: 20px 10px;
+  font-family: 'Vintage Goods', cursive;
+  font-weight: bold;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px auto;
+}
+
+th, td {
+  padding: 16px;
+  border: 1px solid #cccccc;
+  vertical-align: top;
+  font-size: 18px;
+}
+
+th {
+  background-color: #000000;
+  color: #b3571e;
+  font-family: 'Vintage Goods', cursive;
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+}
+
+td:first-child {
+  width: 40%;
+}
+
+td {
+  background-color: #fdfdfd;
+}
+
+p {
+  font-size: 21px;
+  margin: 10px 0;
+  text-align: justify;
+  hyphens: auto;
+  color: #000000;
+  font-family: 'Lora', serif;
+
+}
+
+tr:nth-child(even) td {
+  background-color: #f7f7f7;
+}
+
+th:nth-child(4),
+td:nth-child(4) {
+  width: 30%;
+}
+
+.objective {
+  font-weight: bold;
+  text-decoration: underline;
+  color: #000000;
+  margin-bottom: 5px;
+  font-size: 18px;
+}
+
+@media (max-width: 768px) {
+  table, thead, tbody, th, td, tr {
+    display: block;
+  }
+
+  th, td {
+    width: 100% !important;
+  }
+}

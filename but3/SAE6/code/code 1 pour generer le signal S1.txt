@@ -1,0 +1,26 @@
+#include <Arduino.h>
+
+// ----------------------
+// Configuration du Signal S1
+// ----------------------
+#define S1_PIN         23      // GPIO de sortie du signal S1
+#define S1_CHANNEL     0       // Canal PWM utilisé pour S1
+#define S1_FREQ        1000    // Fréquence du signal S1 en Hz (> 1 kHz)
+#define S1_RESOLUTION  10      // Résolution du PWM S1 en bits (0–1023)
+#define S1_rapport_clique 50     // Rapport cyclique (%) du signal S1
+
+void setup() {
+  // -------- Initialisation du PWM pour S1 --------
+  ledcSetup(S1_CHANNEL, S1_FREQ, S1_RESOLUTION);    // Configure le canal PWM
+  ledcAttachPin(S1_PIN, S1_CHANNEL);               // Lie le canal PWM au GPIO S1
+
+  // -------- Calcul du duty-cycle pour S1 --------
+  uint32_t s1_duty = (S1_rapport_clique * ((1 << S1_RESOLUTION) - 1)) / 100;
+
+  // -------- Démarrage du signal S1 --------
+  ledcWrite(S1_CHANNEL, s1_duty);                 // Génère le PWM sur S1_PIN
+}
+
+void loop() {
+  // Rien à faire : le signal S1 est généré automatiquement par le hardware
+}

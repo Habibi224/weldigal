@@ -1,0 +1,22 @@
+#include <Arduino.h>  // Bibliothèque principale Arduino pour utiliser les fonctions de base
+
+#define LED1 22  // Broche connectée à la première LED
+#define LED2 23  // Broche connectée à la deuxième LED
+
+void setup() {
+  // Configure les broches des LEDs comme sorties
+  pinMode(LED1, OUTPUT);
+  pinMode(LED2, OUTPUT);
+}
+
+void loop() {
+  // Allume les deux LEDs
+  digitalWrite(LED1, HIGH);  // Met la LED1 sous tension
+  digitalWrite(LED2, HIGH);  // Met la LED2 sous tension
+  delay(1000);               // Attend 1000 millisecondes (1 seconde)
+
+  // Éteint les deux LEDs
+  digitalWrite(LED1, LOW);   // Coupe la LED1
+  digitalWrite(LED2, LOW);   // Coupe la LED2
+  delay(500);                // Attend 500 millisecondes (0,5 seconde)
+}

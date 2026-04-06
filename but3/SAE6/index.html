@@ -1,43 +1,466 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Page en construction</title>
-  <style>
-    body {
-      background-color: #f0f0f0;
-      color: #333;
-      font-family: Arial, Helvetica, sans-serif;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      text-align: center;
-    }
-
-    h1 {
-      font-size: 3em;
-      color: #ff6600;
-      margin-bottom: 20px;
-    }
-
-    p {
-      font-size: 1.5em;
-      color: #555;
-    }
-
-    .construction-icon {
-      font-size: 5em;
-      margin-bottom: 20px;
-    }
-  </style>
+  <title>Mon site web pour le portfolio</title>
+  <!-- Feuille de style principale -->
+  <link rel="stylesheet" href="SAE4.css">
+  <!-- Import des polices Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Marathi:ital@0;1&display=swap" rel="stylesheet">
 </head>
+<link href="https://fonts.googleapis.com/css2?family=Vintage+Goods&display=swap" rel="stylesheet">
+
 <body>
-  <div class="construction-icon">🚧</div>
-  <h1>Page en cours de construction</h1>
-  <p>Merci de votre patience !</p>
+  <div class="header">Projet 1 (SAE5) : Générateur de signaux numériques synchronisés (Semestre 6) </div>
+  <table>
+    <tr>
+      <td colspan="4">
+        <p class="objective"></p>
+        <p>Ce projet, intitulé Générateur de signaux numériques synchronisés, consiste à concevoir et réaliser un
+          système expérimental capable de générer plusieurs signaux numériques synchronisés sur des sorties GPIO. Il
+          s’inscrit dans une
+          démarche de prototypage visant à répondre à un besoin exprimé par un laboratoire de recherche en électronique
+          (car la SAE est une mise en situation),
+          tout en permettant de mettre en pratique des compétences en électronique numérique, programmation embarquée,
+          systèmes temps réel et communication sans fil.
+        </p>
+        <p>
+          Le système repose sur l’utilisation d’un microcontrôleur ESP32, déjà étudié lors du semestre précédent, qui
+          constitue le cœur du dispositif. Grâce à ses capacités en traitement temps réel et en communication Wi-Fi, il
+          permet de générer et piloter plusieurs signaux numériques de manière précise et simultanée via ses sorties
+          GPIO. Quatre signaux synchronisés sont générés, chacun répondant à des contraintes spécifiques :</p>
+
+        <ul>
+          <li>S1 est le signal de référence de duty variable entre 1% et 99% de fréquence réglable &gt; 1 kHz (maximum à
+            tester en fonction du matériel)</li>
+          <li>S2 = S1 mais avec phase réglable entre 0 et 360°</li>
+          <li>S3 est de fréquence multiple de celle de S1 soit FS3 = q × FS1 avec q = 0.5 × n + 1 et n entier 0 &lt;= n
+            &lt;= 10</li>
+          <li>S4 = S3 mais avec phase (indépendante de celle de S2) réglable entre 0 et 360°</li>
+        </ul>
+
+        La démarche adoptée pour ce projet s’articule en plusieurs étapes.
+        <p>
+          Dans un premier temps, un travail de compréhension des concepts clés est réalisé, notamment autour des notions
+          de multitâche et de systèmes temps réel, essentielles pour garantir la génération simultanée et précise de
+          plusieurs signaux. Cette phase s’appuie sur une série de questions guidées, ainsi que sur des échanges avec
+          des outils d’assistance comme ChatGPT, afin de clarifier les mécanismes et orienter les choix techniques.
+
+          Dans un second temps, le développement est mené de manière progressive. Le signal de référence S1 est d’abord
+          généré et validé expérimentalement à l’aide d’un oscilloscope. Une fois ce signal maîtrisé, les autres signaux
+          (S2, S3 puis S4) sont implémentés successivement, en ajoutant progressivement les contraintes de
+          synchronisation, de déphasage et de relation de fréquence.
+
+          Enfin, des mesures expérimentales sont réalisées afin d’évaluer les performances du système, notamment en
+          termes de précision, de stabilité et de synchronisation des signaux.
+        </p>
+
+      </td>
+    </tr>
+
+    <tr>
+      <th>Tâches réalisées</th>
+      <th>Ressources utilisées</th>
+      <th>Traces</th>
+      <th>Autoévaluation</th>
+    </tr>
+
+
+
+
+
+
+    <tr>
+      <td>
+        <p><strong>Prise en main le module PWM (LEDC) de l’ESP32</strong></p>
+
+        <p>Cette étape vise à étudier et comprendre le fonctionnement du module matériel LEDC de l’ESP32, dédié à la
+          génération
+          de signaux PWM, afin de pouvoir l’exploiter efficacement dans la suit.</p>
+
+        <p>L’objectif n’est pas encore de concevoir un signal entièrement paramétrable, mais de mettre en œuvre une
+          première génération de signal
+          PWM simple. Cette phase permet de valider le bon fonctionnement du
+          périphérique et d’observer ses performances, notamment en termes de fréquence maximale atteignable et de
+          précision du rapport cyclique.</p>
+
+        <p>Pour cela, un signal PWM est généré sur une sortie GPIO à partir d’une configuration fixe définie dans le
+          code (fréquence,
+          résolution et rapport cyclique constants). À ce stade, ces paramètres ne sont pas modifiables dynamiquement et
+          nécessitent une
+          recompilation du programme pour être ajustés</p>
+        <p>
+          <a href="https://deepbluembedded.com/esp32-pwm-tutorial-examples-analogwrite-arduino/">Explication de comment
+            le LEDC fonctionne</a>
+        </p>
+      </td>
+      <td class="resources">
+        <p>Carte ESP32 </p>
+        <p>PC portable</p>
+        <p><a href="https://chanterie37.fr/fablab37110/doku.php?id=start:esp32:pwm&rev=1671553096">Site</a></p>
+        <p><a href="https://www.upesy.fr/blogs/tutorials/how-works-timers-in-micro-controllers">Site</a></p>
+        <p><a href="https://www.upesy.fr/blogs/tutorials/how-to-use-pwm-on-esp32-with-examples">Site</a></p>
+        <p><a
+            href="https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/peripherals/ledc.html">Site</a>
+        </p>
+      </td>
+      <td>
+        <p><a href="code/code%201%20pour%20generer%20le%20signal%20S1.txt">Code</a></p>
+        <p>
+          <a href="image/bmp_51_002.png" target="_blank">
+            <img src="image/bmp_51_002.png" alt="structure" width="200">
+          </a>
+        </p>
+        <br>
+
+        <p><a href="code/code%202.txt">Code</a></p>
+        <p>
+          <a href="image/2.png" target="_blank">
+            <img src="image/2.png" alt="structure" width="200">
+          </a>
+        </p>
+      </td>
+      <td>
+        <p>
+          Cette phase de prise en main a été relativement facile à réaliser. Les ressources disponibles et la logique de
+          programmation proche de celle d’Arduino ont facilité la compréhension rapide du fonctionnement de la carte.
+          Elle m’a permis de gagner en confiance et de poser des bases solides pour aborder les étapes suivantes du
+          projet, plus complexes et plus orientées vers l’intégration de plusieurs fonctionnalités.
+        </p>
+      </td>
+    </tr>
+
+
+
+
+
+
+    <tr>
+      <td>
+        <p><strong>Implémenter le pilotage dynamique du PWM (LEDC) via interface web</strong></p>
+        <p>Une fois la génération du signal PWM validée, l’étape suivante consiste à permettre le contrôle de ses
+          paramètres, notamment la fréquence et
+          le rapport cyclique, à travers une interface utilisateur.
+          exploitant ses capacités de communication Wi-Fi </p>
+        <p>
+          Dans un premier temps, l’interface est conçue autour de contrôles interactifs de type curseurs (sliders),
+          permettant à l’utilisateur
+          d’ajuster intuitivement la fréquence et le rapport cyclique du signal.
+        </p>
+
+        <p>
+          Dans un second temps, le code de génération du signal PWM précédemment développé est adapté afin de prendre en
+          compte les paramètres
+          transmis par l’interface web. Les valeurs issues des curseurs sont récupérées, traitées puis appliquées
+          dynamiquement au module LEDC,
+          permettant ainsi une mise à jour en temps réel du signal généré sans nécessiter de recompilation.
+        </p>
+      </td>
+      <td class="resources">
+        <p>Carte ESP32 </p>
+        <p>PC portable</p>
+        <p>Oscilloscope</p>
+      </td>
+      <td>
+        <p><a href="code/interface_web.txt">interface web</a></p>
+        <p>
+          <a href="image/web.png" target="_blank">
+            <img src="image/web.png" alt="structure" width="200">
+          </a>
+        </p>
+        <br>
+
+        <p><a href="code/interface_web+S1.txt">S1 controler par interface web</a></p>
+        <p>
+          <a href="video/demo1.mp4" target="_blank">
+            <img src="image/photo.png.png" alt="structure" width="200">
+          </a>
+        </p>
+      </td>
+      <td>
+        <p>
+          Cette activité a été globalement bien maîtrisée, malgré un contexte de pression lié aux contraintes de temps
+          du projet. La mise en œuvre de l’interface web et son intégration avec le module PWM se sont déroulées de
+          manière fluide, notamment grâce à une bonne compréhension préalable du fonctionnement de l’ESP32 et du
+          périphérique LEDC
+        </p>
+        <p>
+          Cette phase m’a permis de consolider mes compétences en développement embarqué et en interaction entre
+          logiciel et matériel, en particulier
+          sur la gestion de paramètres en temps réel via une interface utilisateur.
+        </p>
+      </td>
+    </tr>
+
+
+
+
+
+
+
+
+    <tr>
+      <td>
+        <p><strong>Implémenter la génération du signal S2 déphasé par rapport à S1</strong></p>
+        <p>Une fois le signal de référence S1 maîtrisé, l’objectif de cette étape est de générer un second signal S2,
+          synchronisé avec S1 mais présentant un décalage de phase contrôlé.</p>
+        <p>
+          Dans un premier temps, un second canal du module LEDC est configuré afin de produire un signal PWM avec les
+          mêmes paramètres que S1, notamment en termes de fréquence et de rapport
+          cyclique. Cela permet d’obtenir deux signaux de base identiques.
+        </p>
+
+        <p>
+          Dans un second temps, un déphasage est introduit sur le signal S2 en exploitant le paramètre hpoint du module
+          LEDC. Ce décalage n’est pas fixé dans le code, mais piloté dynamiquement depuis l’interface web, permettant à
+          l’utilisateur d’ajuster la phase en temps réel.
+
+          La valeur de phase, exprimée en degrés, est ainsi convertie en ticks puis appliquée au module LEDC, ce qui
+          permet de décaler le point de départ du signal S2 par rapport à S1.
+        </p>
+
+      </td>
+      <td class="resources">
+        <p>Carte ESP32 </p>
+        <p>PC portable</p>
+        <p>Oscilloscope</p>
+      </td>
+      <td>
+        <p><a href="code/S2.txt">Code</a></p>
+        <p>
+          <a href="video/demo2.mp4" target="_blank">
+            <img src="image/photo.png.png" alt="structure" width="200">
+          </a>
+        </p>
+
+        <p>
+          <a href="image/180.bmp" target="_blank">
+            <img src="image/180.bmp" alt="structure" width="180">
+          </a>
+        </p>
+        <p style="text-align: center;"></p>
+          S2 dephasé de 180°
+        <p>
+          <a href="image/259.bmp" target="_blank">
+            <img src="image/259.bmp" alt="structure" width="180">
+          </a>
+        </p>
+
+        <p style="text-align: center;">
+          S2 dephasé de 256°
+        </p>
+
+      </td>
+      <td>
+
+
+
+        <p>
+          Les mesures réalisées à l’oscilloscope ont permis de vérifier le déphasage à l’aide de la relation φ = (360 ×
+          t_mesuré)/T, confirmant la cohérence entre la valeur affichée sur l’interface web et le signal réel, avec une
+          précision d’environ ±2°.
+        </p>
+
+        <p>
+          Malgré cette validation, on observe un léger manque de précision lié à la résolution finie du PWM et au
+          décalage appliqué en ticks discrets. En particulier, à 180°, le signal n’est pas parfaitement en opposition de
+          phase avec S1, ce qui met en évidence les limites du module LEDC pour un contrôle de phase très fin entre
+          signaux synchronisés. Cette étape a permis de développer une démarche rigoureuse de validation expérimentale,
+          en reliant calcul théorique, mesures à l’oscilloscope et analyse des limites matérielles du périphérique.
+        </p>
+
+      </td>
+    </tr>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <tr>
+      <td>
+        <p><strong>Implémenter la génération du signal S3 de fréquence multiple de S1</strong></p>
+
+        <p>
+          Une fois les signaux S1 et S2 mis en œuvre, l’objectif de cette étape est de générer un troisième signal S3
+          dont la fréquence est un multiple de celle du signal de référence S1.
+        </p>
+
+        <p>
+          Dans un premier temps, une étude du module LEDC montre qu’il n’est pas possible d’utiliser un même timer pour
+          produire simultanément des signaux de fréquences différentes. En effet, la fréquence et la résolution étant
+          définies au niveau du timer, tous les canaux qui lui sont associés partagent nécessairement ces mêmes
+          paramètres. Il est donc nécessaire d’utiliser un second timer pour permettre à S3 d’avoir une fréquence
+          différente de celle de S1.
+        </p>
+
+        <p>
+          Dans un second temps, la valeur du coefficient q est calculée dynamiquement à partir du paramètre n transmis
+          depuis l’interface web. La fréquence de S3 est ensuite déterminée automatiquement à partir de celle de S1,
+          puis appliquée à un troisième canal PWM du module LEDC.
+        </p>
+
+      </td>
+      <td class="resources">
+        <p>Carte ESP32 </p>
+        <p>PC portable</p>
+        <p>Oscilloscope</p>
+      </td>
+      <td>
+        <p><a href="code/S1%20S2%20S3%20OK.txt">Code</a></p>
+
+
+        <p>
+          <a href="image/S3_1.bmp" target="_blank">
+            <img src="image/S3_1.bmp" alt="structure" width="180">
+          </a>
+        </p>
+        <p style="text-align: center;"></p>
+
+        <p>
+          <a href="image/S3_2.bmp" target="_blank">
+            <img src="image/S3_2.bmp" alt="structure" width="180">
+          </a>
+        </p>
+
+
+
+      </td>
+      <td>
+        <p>
+          Les mesures réalisées mettent en évidence un retard d’environ 8 µs entre les signaux, ainsi qu’un défaut de
+          synchronisation entre S1 et S3. Ce comportement s’explique par l’utilisation de timers LEDC distincts pour
+          générer des fréquences différentes, ce qui ne garantit pas un alignement temporel strict entre les signaux.
+        </p>
+        <p>
+          Une solution plus rigoureuse aurait consisté à utiliser le module MCPWM, permettant de synchroniser plusieurs
+          timers à partir d’une référence commune. Cependant, la mise en œuvre de cette solution nécessite une
+          modification plus importante de l’architecture du code et une prise en main d’un nouveau périphérique.
+        </p>
+        <p>
+          Le choix a été fait de conserver l’implémentation basée sur le module LEDC, malgré ce retard.
+        </p>
+      </td>
+    </tr>
+
+
+
+
+
+
+    <tr>
+      <td>
+        <p><strong>Implémenter la génération du signal S4 déphasé par rapport à S3</strong></p>
+
+        <p>
+          Une fois les signaux S1 et S2 mis en œuvre, l’objectif de cette étape est de générer un troisième signal S3
+          dont la fréquence est un multiple de celle du signal de référence S1.
+        </p>
+
+        <p>
+          Dans un premier temps, une étude du module LEDC montre qu’il n’est pas possible d’utiliser un même timer pour
+          produire simultanément des signaux de fréquences différentes. En effet, la fréquence et la résolution étant
+          définies au niveau du timer, tous les canaux qui lui sont associés partagent nécessairement ces mêmes
+          paramètres. Il est donc nécessaire d’utiliser un second timer pour permettre à S3 d’avoir une fréquence
+          différente de celle de S1.
+        </p>
+
+        <p>
+          Dans un second temps, la valeur du coefficient q est calculée dynamiquement à partir du paramètre n transmis
+          depuis l’interface web. La fréquence de S3 est ensuite déterminée automatiquement à partir de celle de S1,
+          puis appliquée à un troisième canal PWM du module LEDC.
+        </p>
+
+      </td>
+      <td class="resources">
+        <p>Carte ESP32 </p>
+        <p>PC portable</p>
+        <p>Oscilloscope</p>
+      </td>
+      <td>
+        <p><a href="code/S4.txt">Code</a></p>
+
+
+        <p>
+          <a href="image/S4_1.bmp" target="_blank">
+            <img src="image/S4_1.bmp" alt="structure" width="180">
+          </a>
+        </p>
+        <p style="text-align: center;">
+        </p>
+
+        <p>
+          <a href="image/S4_2.bmp" target="_blank">
+            <img src="image/S4_2.bmp" alt="structure" width="180">
+          </a>
+        </p>
+
+
+
+      </td>
+      <td>
+        <p>
+          Le retard observé sur S3 impacte directement le signal S4, puisque celui-ci est généré à partir des mêmes
+          paramètres de fréquence et de base temporelle. Ainsi, le déphasage appliqué à S4 s’effectue par rapport à un
+          signal S3 déjà décalé.
+        </p>
+        <p>
+          Cela m’a permis de rester cohérent dans la génération des signaux, en conservant une logique de construction
+          basée sur des signaux dérivés, tout en mettant en évidence la propagation des imprécisions au sein du système.
+        </p>
+      </td>
+    </tr>
+
+
+
+
+  </table>
+
+  <div class="footer">ANALYSE PERSONNELLE</div>
+  <table>
+    <tr>
+      <td colspan="4">
+        <p>
+          Ce projet m’a permis de mettre en œuvre la génération de signaux PWM synchronisés et de mieux comprendre les
+          limites des périphériques matériels comme le module LEDC. Les premières étapes, notamment la génération de S1
+          et S2, ont été réalisées avec rigueur, en validant chaque fonctionnalité à l’aide de mesures à l’oscilloscope
+          et en vérifiant la cohérence entre les calculs théoriques et le comportement réel.
+        </p>
+
+        <p>
+          À partir de la génération de S3, la complexité du système a augmenté, notamment avec l’introduction de
+          fréquences différentes et des problématiques de synchronisation. J’ai rencontré des limites liées à
+          l’architecture du LEDC, en particulier l’impossibilité de garantir une synchronisation parfaite entre
+          plusieurs timers. Face à ces difficultés, je reconnais ne pas avoir poussé l’optimisation jusqu’à une solution
+          plus avancée comme l’utilisation du module MCPWM, qui aurait nécessité une refonte plus importante du code.
+        </p>
+
+        <p>
+
+          Cependant, cette phase m’a permis de développer des compétences essentielles. J’ai adopté une démarche de
+          validation progressive en réalisant des tests unitaires à chaque étape avant d’intégrer les différentes
+          fonctionnalités dans un système complet. Cette approche m’a permis de détecter rapidement les erreurs, de
+          comprendre leur origine et de sécuriser le fonctionnement global du projet.
+        </p>
+
+        <p>
+          Ce travail m’a également permis de renforcer ma capacité à analyser un système réel, à identifier ses limites
+          et à faire des choix techniques cohérents en fonction du temps et des objectifs du projet.
+        </p>
+      </td>
+    </tr>
+  </table>
 </body>
+
 </html>

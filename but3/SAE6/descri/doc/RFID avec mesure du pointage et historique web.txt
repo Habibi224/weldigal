@@ -1,0 +1,199 @@
+#include <WiFi.h>
+#include <WebServer.h>
+#include <SPI.h>
+#include <MFRC522.h>
+
+// ===================== CONFIG WIFI =====================
+const char* ssid = "Bouba";
+const char* password = "Diallo12345";
+
+WebServer server(80);
+
+// ===================== CONFIG RC522 =====================
+#define SS_PIN   5
+#define RST_PIN  33
+
+#define LED_OK   25   // LED verte
+#define LED_NO   27   // LED rouge
+
+MFRC522 mfrc522(SS_PIN, RST_PIN);
+
+// ===================== VARIABLES RFID =====================
+bool ledState = false;        
+unsigned long startTime = 0;  
+unsigned long totalPresence = 0; 
+
+String historyHTML = "";      
+
+// ===================== HORLOGE INTERNE =====================
+int heure = 8, minute = 0, seconde = 0;
+int jour = 3, mois = 10, annee = 2025;
+unsigned long lastUpdate = 0;
+
+void updateClock() {
+  if (millis() - lastUpdate >= 1000) { // chaque seconde
+    lastUpdate = millis();
+    seconde++;
+    if (seconde >= 60) { seconde = 0; minute++; }
+    if (minute >= 60) { minute = 0; heure++; }
+    if (heure >= 24) { heure = 0; jour++; } 
+    // simplifié : pas de gestion exacte des jours/mois
+  }
+}
+
+String getCurrentTime() {
+  char buffer[20];
+  sprintf(buffer, "%02d:%02d:%02d", heure, minute, seconde);
+  return String(buffer);
+}
+
+String getCurrentDate() {
+  char buffer[20];
+  sprintf(buffer, "%02d/%02d/%04d", jour, mois, annee);
+  return String(buffer);
+}
+
+// ===================== FORMAT DUREE =====================
+String formatDuration(unsigned long ms) {
+  unsigned long sec = ms / 1000;
+  int h = sec / 3600;
+  int m = (sec % 3600) / 60;
+  int s = sec % 60;
+  char buffer[20];
+  sprintf(buffer, "%02d:%02d:%02d", h, m, s);
+  return String(buffer);
+}
+
+// ===================== PAGE HTML =====================
+String buildPage() {
+  String page = R"rawliteral(
+  <!DOCTYPE html>
+  <html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <title>Pointage RFID</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 0; padding: 0;
+             background: #f4f4f9; color: #333; text-align: center; }
+      header { background: #4CAF50; color: white; padding: 15px; font-size: 20px; }
+      .card { margin: 20px auto; padding: 20px; background: white; border-radius: 12px;
+              box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 80%; max-width: 700px; }
+      table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+      th, td { padding: 10px; border-bottom: 1px solid #ddd; text-align: center; }
+      th { background: #f0f0f0; }
+      .led { font-size: 18px; font-weight: bold; }
+    </style>
+    <script>
+      async function refresh() {
+        const res = await fetch('/data');
+        const json = await res.json();
+        document.getElementById('date').innerText = json.date;
+        document.getElementById('heure').innerText = json.heure;
+        document.getElementById('etat').innerText = json.etat;
+        document.getElementById('total').innerText = json.total;
+        document.getElementById('history').innerHTML = json.history;
+      }
+      setInterval(refresh, 1000); // mise à jour toutes les 1 sec
+      window.onload = refresh;
+    </script>
+  </head>
+  <body>
+    <header>📋 Système de pointage RFID</header>
+    <div class="card">
+      <p><b>Date actuelle :</b> <span id="date"></span></p>
+      <p><b>Heure actuelle :</b> <span id="heure"></span></p>
+      <p class="led">État actuel : <span id="etat"></span></p>
+      <p><b>Durée totale de présence :</b> <span id="total"></span></p>
+
+      <h3>Historique :</h3>
+      <table>
+        <tr><th>Date</th><th>Entrée</th><th>Sortie</th><th>Durée</th></tr>
+        <tbody id="history"></tbody>
+      </table>
+    </div>
+  </body>
+  </html>
+  )rawliteral";
+
+  return page;
+}
+
+// ===================== SERVER HANDLERS =====================
+void handleRoot() {
+  server.send(200, "text/html", buildPage());
+}
+
+void handleData() {
+  String json = "{";
+  json += "\"date\":\"" + getCurrentDate() + "\",";
+  json += "\"heure\":\"" + getCurrentTime() + "\",";
+  json += "\"etat\":\"" + String(ledState ? "🟢 Pointé" : "🔴 Dépointé") + "\",";
+  json += "\"total\":\"" + formatDuration(totalPresence) + "\",";
+  json += "\"history\":\"" + historyHTML + "\"";
+  json += "}";
+  server.send(200, "application/json", json);
+}
+
+// ===================== SETUP =====================
+void setup() {
+  Serial.begin(115200);
+  SPI.begin();
+  mfrc522.PCD_Init();
+
+  pinMode(LED_OK, OUTPUT);
+  pinMode(LED_NO, OUTPUT);
+
+  digitalWrite(LED_OK, LOW);
+  digitalWrite(LED_NO, HIGH);
+
+  // WiFi AP
+  WiFi.mode(WIFI_AP);
+  WiFi.softAP(ssid, password);
+
+  // Routes
+  server.on("/", handleRoot);
+  server.on("/data", handleData);
+  server.begin();
+
+  Serial.println("Serveur actif. Connectez-vous au WiFi et allez sur 192.168.4.1");
+}
+
+// ===================== LOOP =====================
+void loop() {
+  server.handleClient();
+  updateClock();
+
+  if (mfrc522.PICC_IsNewCardPresent() && mfrc522.PICC_ReadCardSerial()) {
+    ledState = !ledState;
+
+    String currentDate = getCurrentDate();
+    String currentTime = getCurrentTime();
+
+    if (ledState) {
+      // LED verte ON (entrée)
+      digitalWrite(LED_OK, HIGH);
+      digitalWrite(LED_NO, LOW);
+      startTime = millis();
+
+      historyHTML += "<tr><td>" + currentDate + "</td><td>" + currentTime + "</td><td>-</td><td>-</td></tr>";
+    } else {
+      // LED rouge ON (sortie)
+      digitalWrite(LED_OK, LOW);
+      digitalWrite(LED_NO, HIGH);
+
+      unsigned long session = millis() - startTime;
+      totalPresence += session;
+
+      // Remplacer la dernière ligne (entrée) par entrée + sortie + durée
+      int pos = historyHTML.lastIndexOf("</tr>");
+      if (pos != -1) {
+        historyHTML.remove(pos);
+        historyHTML += "<td>" + currentTime + "</td><td>" + formatDuration(session) + "</td></tr>";
+      }
+    }
+
+    mfrc522.PICC_HaltA();
+    mfrc522.PCD_StopCrypto1();
+    delay(1000); // Anti-rebond
+  }
+}

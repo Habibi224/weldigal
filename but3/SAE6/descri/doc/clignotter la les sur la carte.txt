@@ -1,0 +1,13 @@
+#include <Arduino.h>  // Inclut la bibliothèque principale Arduino pour utiliser les fonctions de base
+
+void setup() {
+  pinMode(LED_BUILTIN, OUTPUT); // Configure la LED intégrée de la carte comme une sortie
+}
+
+void loop() {
+  digitalWrite(LED_BUILTIN, HIGH); // Allume la LED
+  delay(100);                       // Attend 100 millisecondes (0,1 seconde)
+  
+  digitalWrite(LED_BUILTIN, LOW);  // Éteint la LED
+  delay(1000);                      // Attend 1000 millisecondes (1 seconde)
+}
