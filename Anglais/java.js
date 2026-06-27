@@ -23,7 +23,6 @@ revealOnScroll();
 
 
 const sections = document.querySelectorAll("header, main section, footer section");
-const navLinks = document.querySelectorAll("nav ul li a");
 
 window.addEventListener("scroll", () => {
     let current = "";
@@ -37,11 +36,6 @@ window.addEventListener("scroll", () => {
         }
     });
 
-    navLinks.forEach(link => {
-        link.classList.remove("active");
-        if (link.getAttribute("href") === `#${current}`) {
-            link.classList.add("active");
-        }
     });
 });
 

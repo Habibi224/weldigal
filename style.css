@@ -33,16 +33,21 @@
 }
 
 body {
-font-family: 'Higuen', serif;    font-size: 16px;
+    font-family: 'Higuen', serif;    
+    font-size: 16px;
     letter-spacing: 1px;
     font-weight: normal;
     background-color: var(--black);
-
 }
 
 h2 {
     color: #ffffff;
     /* texte blanc */
+}
+h4 {
+    font-family: 'Higuen', serif;    
+    font-size: 20px;
+    color: var(--white);
 }
 
 header {
@@ -54,7 +59,6 @@ header {
     background-position: center;
     background-repeat: no-repeat;
 }
-
 
 header::before {
     content: "";
@@ -73,7 +77,6 @@ header .left {
     /* texte blanc */
 }
 
-
 a {
     text-decoration: none;
     color: #003cff;
@@ -87,6 +90,7 @@ ul {
 .container {
     max-width: 1080px;
     margin: auto;
+    padding: 0 20px; /* AJOUT : Empêche le contenu de coller aux bords sur mobile */
 }
 
 .row {
@@ -111,72 +115,35 @@ ul {
     text-align: center;
 }
 
-nav {
-    width: 100%;
-    background-color: var(--black);
-    position: fixed;
-    z-index: 999;
-    padding: 20px;
-    padding-left: 500px; 
+
+
+/* =========================================
+   MEDIA QUERIES (RESPONSIVE DESIGN)
+   ========================================= */
+
+/* Pour les tablettes et petits écrans (max 992px) */
+@media screen and (max-width: 992px) {
+   
 }
 
-nav .logo {
-    color: var(--white);
-    font-size: 32px;
-    font-weight: 600;
-    text-transform: capitalize;
+/* Pour les mobiles (max 768px) */
+@media screen and (max-width: 768px) {
+    .full-screen {
+        padding: 60px 0 0; /* Réduit un peu l'espacement en haut sur mobile */
+    }
+
+
 }
 
 
 
-nav .logo span {
-    color: var(--mainColor);
-}
-
-nav .container {
-    padding: 0 25px;
-}
-
-nav .menu-btn i {
-    color: var(--white);
-    font-size: 28px;
-    cursor: pointer;
-    display: none;
-}
-
-nav ul {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-nav ul li {
-    margin: 0 5px;
-}
-
-nav ul li a {
-    color: var(--mainColor);
-    background: var(--white);
-    font-size: 22px;
-    font-weight: 600;
-    padding: 8px 15px;
-    border-radius: 5px;
-    transition: all .3s ease;
-}
-
-nav ul li a.active,
-nav ul li a:hover {
-    color: var(--mainColor);
-    background: var(--white);
-}
 
 /*MAIN*/
 
-
-
 .left,
 .right {
-    flex: 10 0 50%;
-    max-width: 1000%;
+    flex: 1 0 50%; /* J'ai corrigé le "10" en "1" pour un comportement flex standard */
+    max-width: 100%; /* J'ai remplacé 1000% par 100% pour éviter tout dépassement horizontal */
     padding: 2px;
 }
 
@@ -206,8 +173,6 @@ nav ul li a:hover {
     margin-bottom: 10px;
 }
 
-
-
 /* Partie — Boutons BUT1, BUT2, BUT3 */
 .button-container {
     display: flex;
@@ -221,13 +186,13 @@ nav ul li a:hover {
     font-family: Georgia, 'Times New Roman', Times, serif;
     font-size: 34px; /* texte plus lisible */
     padding: 20px 50px; /* taille du bouton proportionnelle */
-    border: 3px solid var(--mainColor); /* correction de la variable */
+    border: 3px solid var(--mainColor); 
     border-radius: 50px;
     background-color: rgba(0, 0, 0, 0.5);
     color: var(--black);
     cursor: pointer;
     transition: all 0.3s ease;
-    position: relative; /* pour les effets hover personnalisés */
+    position: relative; 
     overflow: hidden;
 }
 
@@ -235,25 +200,23 @@ nav ul li a:hover {
 .button:hover {
     color: white;
     background: linear-gradient(90deg, rgb(88, 199, 246), rgb(88, 199, 246), rgb(88, 199, 246));
-    transform: translateY(-3px); /* léger mouvement */
+    transform: translateY(-3px); 
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
-/* Spécifique pour BUT1, BUT2, BUT3 si tu veux des styles différents */
+/* Spécifique pour BUT1, BUT2, BUT3 (coquille corrigée ici) */
 .button-but1,
 .button-but2,
-.button-but2 {
+.button-but3 {
     border-color: rgb(88, 199, 246);
 }
-
 
 /* Hover effets spécifiques */
 .button-but1:hover,
 .button-but2:hover,
 .button-but3:hover {
-    font-weight: bold; /* texte un peu plus prononcé */
+    font-weight: bold; 
 }
-
 
 /* Conteneur des boutons dans la section parcours */
 .parcours-buttons {
@@ -264,6 +227,63 @@ nav ul li a:hover {
     width: 100%;
     margin-top: 100px; 
 }
+
+/* =========================================
+   MEDIA QUERIES (RESPONSIVE DESIGN)
+   ========================================= */
+
+/* Pour les tablettes et petits écrans (max 992px) */
+@media screen and (max-width: 992px) {
+    .left,
+    .right {
+        flex: 1 0 100%; /* Les colonnes prennent 100% de la largeur et passent l'une sous l'autre */
+        text-align: center; /* Centre le contenu pour plus d'esthétique sur tablette/mobile */
+    }
+
+    .left .line {
+        margin: 0 auto; /* Permet de centrer la petite barre décorative */
+    }
+
+    .button-container {
+        flex-wrap: wrap; /* Permet aux gros boutons de passer à la ligne s'il manque de la place */
+    }
+}
+
+/* Pour les mobiles (max 768px) */
+@media screen and (max-width: 768px) {
+  
+
+   
+
+    .left h2 {
+        font-size: 35px; /* On réduit drastiquement la taille du titre */
+        line-height: 40px;
+    }
+
+    .left h2 span {
+        font-size: 38px;
+    }
+
+    .button {
+        font-size: 22px; /* On réduit la police des boutons... */
+        padding: 15px 30px; /* ...et on réduit leurs marges internes */
+    }
+
+    .button-container,
+    .parcours-buttons {
+        flex-direction: column; /* Les boutons s'empilent verticalement sur mobile */
+        gap: 15px; /* On réduit l'espace entre eux */
+        margin-top: 50px;
+    }
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -299,18 +319,14 @@ main {
     color: var(--mainColor);
     margin-bottom: 40px;
     font-family: 'Higuen', serif;
-
 }
-
 
 .presentation h3 {
     font-size: 28px;
     color: #58c7f6;
     margin-bottom: 15px;
     font-family: 'Higuen', serif;
-
 }
-
 
 .presentation h2::after {
     content: "";
@@ -322,13 +338,11 @@ main {
     border-radius: 2px;
 }
 
-
 .presentation-content {
     border-left: 4px solid #58c7f6;
     padding-left: 25px;
     margin-left: 10px;
 }
-
 
 /* TEXTE */
 .presentation p {
@@ -338,9 +352,7 @@ main {
     text-align: justify;
     hyphens: auto;
     font-family: 'Higuen', serif;
-
 }
-
 
 .bloc {
     position: relative;
@@ -361,7 +373,69 @@ main {
 
 
 
+
+
+/* =========================================
+   MEDIA QUERIES (RESPONSIVE DESIGN)
+   ========================================= */
+
+/* Écrans moyens (Petits ordinateurs, tablettes en paysage) */
+@media (max-width: 1200px) {
+    .schema_text.ESE,
+    .schema_text.EME {
+        /* On resserre les boîtes vers le centre pour éviter qu'elles sortent de l'écran */
+        left: -30px;
+        right: -30px;
+        width: 450px; 
+    }
+}
+
+/* Tablettes et basculement du schéma en colonne */
+@media (max-width: 900px) {
+    .schema_png {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        min-height: auto;
+        align-items: center; /* Centre tous les éléments de la flexbox */
+    }
+
+    .schema_text {
+        position: static; /* Annule la position absolue */
+        width: 100%;
+        transform: none; /* Annule les translations */
+        text-align: left;
+    }
+
+    /* On réinitialise les valeurs absolues pour éviter des conflits */
+    .schema_text.ESE,
+    .schema_text.EME,
+    .schema_text.AII {
+        left: auto;
+        right: auto;
+        top: auto;
+        bottom: auto;
+    }
+
+    .schema_text.AII {
+        text-align: left; /* On aligne le texte comme les autres pour la cohérence */
+    }
+
+    .schema_png img {
+        margin: 20px auto;
+    }
+}
+
+/* Mobiles (max 768px) */
 @media (max-width: 768px) {
+    main {
+        padding: 40px 15px; /* Réduit l'espace vide global */
+    }
+
+    .presentation {
+        padding: 20px 10px;
+    }
+
     .presentation h2 {
         font-size: 30px;
     }
@@ -372,102 +446,20 @@ main {
 
     .presentation p {
         font-size: 18px;
-    }
-}
-
-
-
-/* CONTAINER */
-.schema_container {
-    margin-top: 40px;
-}
-
-/* TITRE */
-.schema_title {
-    text-align: center;
-    font-size: 26px;
-    font-weight: 700;
-    margin-bottom: 20px;
-}
-
-/* ZONE SCHÉMA */
-.schema_png {
-    position: relative;
-    width: 100%;
-    max-width: 900px;
-    margin: auto;
-    min-height: 350px;
-}
-
-/* IMAGE CENTRALE */
-.schema_png img {
-    display: block;
-    margin: auto;
-    max-width: 260px;
-    height: auto;
-}
-
-
-
-
-.schema_text {
-    position: absolute;
-    width: 560px;
-    padding: 20px 24px;
-    font-size: 18px;
-    line-height: 1.6;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    z-index: 2;
-}
-
-
-/* GAUCHE */
-.schema_text.ESE {
-    left: -200px;
-    top: -10px;
-    transform: translateY(-50%);
-    text-align: left;
-}
-
-/* DROITE */
-.schema_text.EME {
-    right: -200px;
-    top: -10px;
-    transform: translateY(-50%);
-    text-align: left;
-}
-
-/* BAS */
-.schema_text.AII {
-    left: 150px;
-    bottom: 35px;
-    transform: translateX(-50%);
-    text-align: center;
-}
-
-/* RESPONSIVE */
-@media (max-width: 900px) {
-    .schema_png {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        min-height: auto;
+        text-align: left; /* Mieux vaut éviter le "justify" sur mobile (trop de trous entre les mots) */
     }
 
-    .schema_text {
-        position: static;
-        width: 100%;
-        transform: none;
-        text-align: left;
+    /* On réduit les marges internes pour gagner de la place pour le texte sur smartphone */
+    .presentation-content {
+        margin-left: 0;
+        padding-left: 15px;
     }
 
-    .schema_png img {
-        margin: 20px auto;
+    .bloc {
+        margin-left: 10px;
+        padding-left: 15px;
     }
 }
-
 
 
 
@@ -638,6 +630,70 @@ main {
     margin-top: 10px;
     border-radius: 2px;
 }
+
+
+
+
+
+
+/* Conteneur global pour centrer le texte et l'image */
+.info-link-container {
+    text-align: center;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.info-link-container p {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--black); /* Utilise la variable que nous avons définie plus tôt */
+    margin-bottom: 20px;
+}
+
+/* Style de l'image cliquable */
+.clickable-image {
+    max-width: 100%; /* Règle d'or du responsive : l'image ne dépasse jamais de l'écran */
+    width: 400px; /* Taille maximale de l'image sur un grand écran */
+    height: auto; /* Conserve les proportions de l'image sans l'écraser */
+    border-radius: 12px; /* Bords légèrement arrondis */
+    box-shadow: var(--shadow); /* Utilise ta variable d'ombre */
+    border: 3px solid transparent; 
+    transition: all 0.3s ease; /* Animation fluide */
+}
+
+/* Effet au survol de la souris */
+.clickable-image:hover {
+    transform: translateY(-5px) scale(1.02); /* Soulève et grossit légèrement l'image */
+    border-color: var(--mainColor); /* Ajoute une bordure bleue au survol */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Accentue l'ombre */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 .presentation-content_geii {

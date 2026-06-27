@@ -111,63 +111,6 @@ ul {
     text-align: center;
 }
 
-nav {
-    width: 100%;
-    background-color: var(--black);
-    position: fixed;
-    z-index: 999;
-    padding: 20px;
-    padding-left: 500px; 
-}
-
-nav .logo {
-    color: var(--white);
-    font-size: 32px;
-    font-weight: 600;
-    text-transform: capitalize;
-}
-
-
-
-nav .logo span {
-    color: var(--mainColor);
-}
-
-nav .container {
-    padding: 0 25px;
-}
-
-nav .menu-btn i {
-    color: var(--white);
-    font-size: 28px;
-    cursor: pointer;
-    display: none;
-}
-
-nav ul {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-nav ul li {
-    margin: 0 5px;
-}
-
-nav ul li a {
-    color: var(--mainColor);
-    background: var(--white);
-    font-size: 22px;
-    font-weight: 600;
-    padding: 8px 15px;
-    border-radius: 5px;
-    transition: all .3s ease;
-}
-
-nav ul li a.active,
-nav ul li a:hover {
-    color: var(--mainColor);
-    background: var(--white);
-}
 
 /*MAIN*/
 
@@ -190,7 +133,7 @@ nav ul li a:hover {
 .left h2 {
     margin-top: 25px;
     font-size: 50px;
-    color: var(--black);
+    color: var(--white);
     line-height: 55px;
 }
 
@@ -224,7 +167,7 @@ nav ul li a:hover {
     border: 3px solid var(--mainColor); /* correction de la variable */
     border-radius: 50px;
     background-color: rgba(0, 0, 0, 0.5);
-    color: var(--black);
+    color: var(--white);
     cursor: pointer;
     transition: all 0.3s ease;
     position: relative; /* pour les effets hover personnalisés */
@@ -278,7 +221,7 @@ nav ul li a:hover {
 
 /* ===== MAIN ===== */
 main {
-    background-color: var(--black);
+    background-color: var(--white);
     min-height: 100px;
     padding: 80px 20px;
     font-family: 'Higuen', serif;
@@ -499,7 +442,7 @@ main {
 
 /* ===== MAIN ===== */
 main {
-    background-color: var(--black);
+    background-color: var(--white);
     min-height: 100px;
     padding: 80px 20px;
     font-family: 'Higuen', serif;
@@ -730,7 +673,7 @@ main {
     align-items: center;
     gap: 15px;
     font-size: 17px;
-    color: var(--white);
+    color: var(--white1);
 }
 
 .contact-item img {
