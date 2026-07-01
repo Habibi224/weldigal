@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-icons@1.13.12/iconfont/material-icons.min.css">
 </head>
 
+
+
 <body>
     <header>
 
@@ -121,7 +123,31 @@
 
 
 
-        <!-- SECTION PRÉSENTATION GEII-->
+        <div id="portfolio-popup" class="popup hidden">
+    <div class="popup-content">
+
+        <h2>🚧 Portfolio en cours de conception</h2>
+
+        <p>
+            Ce portfolio est actuellement en cours de construction et sera enrichi progressivement
+        </p>
+
+        <p>
+            Vos retours sont les bienvenus ! N'hésitez pas à me faire part de vos suggestions, à me poser des questions
+            sur mon parcours ou mes réalisations, ou à me signaler toute amélioration qui pourrait rendre ce portfolio
+            plus clair et plus agréable à consulter.
+        </p>
+
+        <p class="thanks">
+            Merci pour votre visite et votre contribution !
+        </p>
+
+        <button onclick="closePopup()">Fermer</button>
+
+    </div>
+</div>
+
+        <!-- SECTION PRÉSENTATION de mon parcours de formation-->
 
         <section class="presentation_geii">
             <h2 class="title">Présentation de mon parcours académiques</h2>
@@ -152,27 +178,7 @@
 
                 </p>
 
-                <section>
-                    <div class="box box-parcours">
-                        <section class="parcours-container">
-                            <div class="parcours-buttons">
 
-                                <a href="but1/index.html" class="button button-but1">
-                                    Ma première année<br>BUT 1
-                                </a>
-
-                                <a href="but2/index.html" class="button button-but2">
-                                    Ma deuxième année<br>BUT 2
-                                </a>
-
-                                <a href="but3/index.html" class="button button-but3">
-                                    Ma troisième année<br>BUT 3
-                                </a>
-
-                            </div>
-                        </section>
-                    </div>
-                </section>
             </div>
 
             <br><br><br>
@@ -214,14 +220,105 @@
                     ingénierie.<br>
                 </p>
 
+            </div>
+
+        </section>
+
+
+        <section class="projects-section">
+
+            <h2 class="title">Mes projets et expériences professionnelles</h2>
+
+            <div class="projects-grid">
+
+                <!-- Projet -->
+                <a href="but3/SAE5/index.html" class="project-card">
+                    <div class="project-image" style="background-image: url('but3/SAE5/image/ESP32-Timer2.jpg');">
+                    </div>
+
+                    <div class="project-content">
+                        <span class="project-year"></span>
+                        <h3>ESP32 Smart Timing (IOT)</h3>
+                    </div>
+                </a>
+
+                <!-- Projet -->
+                <a href="but3/SAE6/index.html" class="project-card">
+                    <div class="project-image" style="background-image: url('but3/SAE6/image/web.png');">
+                    </div>
+
+                    <div class="project-content">
+                        <span class="project-year"></span>
+                        <h3>Générateur de signaux numériques</h3>
+                    </div>
+                </a>
+
+                <!-- Projet -->
+                <a href="but2/SAE4/index_SAE4.html" class="project-card">
+                    <div class="project-image" style="background-image: url('photo/rythme.jpg');">
+                    </div>
+
+                    <div class="project-content">
+                        <span class="project-year"></span>
+                        <h3>Cardiofréquentiomètre</h3>
+                    </div>
+                </a>
+
+                <!-- Projet -->
+                <a href="but2/SAE3/index.html" class="project-card">
+                    <div class="project-image" style="background-image: url('images/styloV.png');">
+                    </div>
+
+                    <div class="project-content">
+                        <span class="project-year"></span>
+                        <h3>Stylo voltmètre (STM32)</h3>
+                    </div>
+                </a>
+                <!-- Projet -->
+                <a href="but1/SAE3_robot/index.html" class="project-card">
+
+                    <div class="project-image">
+                        <video autoplay muted loop playsinline>
+                            <source src="but1/SAE3_robot/image/robot.mp4" type="video/mp4">
+                        </video>
+                    </div>
+
+                    <div class="project-content">
+                        <span class="project-year"></span>
+                        <h3>Robot suiveur de ligne</h3>
+                    </div>
+
+                </a>
+
+                <!-- Projet -->
+                <a href="but1/SAE1_con/index.html" class="project-card">
+                    <div class="project-image" style="background-image: url('but1/SAE1_con/image/objectif.jpg');">
+                    </div>
+
+                    <div class="project-content">
+                        <span class="project-year"></span>
+                        <h3>Conception d'un sonomètre (KiCad)</h3>
+                    </div>
+                </a>
+
+                <!-- Projet -->
+                <a href="but1/index.html" class="project-card">
+                    <div class="project-image" style="background-image: url('photo/photo1.jpg');">
+                    </div>
+
+                    <div class="project-content">
+                        <span class="project-year"></span>
+                        <h3>Banc de test électronique d'un moteur</h3>
+                    </div>
+                </a>
 
             </div>
 
-
-
-
-
         </section>
+
+
+
+
     </main>
 
 
@@ -274,6 +371,18 @@
     </footer>
 
     <script src="java.js"></script>
+
+    <script>
+        const popup = document.getElementById("portfolio-popup");
+
+        setTimeout(() => {
+            popup.classList.remove("hidden");
+        }, 5000);
+
+        function closePopup() {
+            popup.classList.add("hidden");
+        }
+    </script>
 
 </body>
 
