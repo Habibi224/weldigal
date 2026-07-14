@@ -13,18 +13,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
 
 
+/* ==========================================================================
+   VARIABLES DE COULEURS ET THÈMES
+   ========================================================================== */
 :root {
-    --mainColor: rgb(88, 199, 246);
-    --white: #000000;
-    --black: rgb(255, 255, 255);
-    --whiteSmoke: #ffffff;
-    --shadow: 0px 4px 4px 0 rgba(21, 21, 21, .2);
+    --mainColor: rgb(88, 199, 246); /* Bleu clair principal */
+    --white: #000000;              /* Note : configuré sur noir ici */
+    --black: rgb(255, 255, 255);   /* Note : configuré sur blanc ici */
+    --whiteSmoke: #ffffff;         /* Blanc pur */
+    --shadow: 0px 4px 4px 0 rgba(21, 21, 21, .2); /* Ombre légère pour les boutons */
 }
 
+/* ==========================================================================
+   RÈGLES DE BASE / RÉINITIALISATION (RESET)
+   ========================================================================== */
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    box-sizing: border-box; /* Inclut les bordures et paddings dans la taille des éléments */
 }
 
 ::before,
@@ -37,75 +43,84 @@ body {
     font-size: 16px;
     letter-spacing: 1px;
     font-weight: normal;
-    background-color: var(--black);
+    background-color: var(--black); /* Fond du site */
 }
 
+/* ==========================================================================
+   TYPOGRAPHIE (TITRES ET TEXTES)
+   ========================================================================== */
 h2 {
-    color: #ffffff;
-    /* texte blanc */
+    color: #ffffff; /* Texte blanc */
 }
+
 h4 {
     font-family: 'Higuen', serif;    
     font-size: 20px;
     color: var(--white);
 }
 
-header {
-    position: relative;
-    min-height: 100vh;
-    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
-                      url("photo/pic2.jpeg");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-header::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-color: rgba(0, 0, 0, 0.5);
-    /* plus sombre = texte plus lisible */
-    z-index: 1;
-}
-
-header .left {
-    position: relative;
-    z-index: 2;
-    /* texte au-dessus de l'overlay */
-    color: #ffffff;
-    /* texte blanc */
-}
-
 a {
-    text-decoration: none;
+    text-decoration: none; /* Supprime le soulignement des liens */
     color: #003cff;
     font-weight: bold;
 }
 
 ul {
-    list-style: none;
+    list-style: none; /* Supprime les puces des listes */
 }
 
+/* ==========================================================================
+   STRUCTURE ET MISE EN PAGE (LAYOUT)
+   ========================================================================== */
+header {
+    position: relative;
+    min-height: 100vh; /* Prend toute la hauteur de l'écran */
+    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                      url("photo/pic2.jpeg"); /* Image de fond avec filtre sombre intégré */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Couche sombre superposée pour améliorer la lisibilité du texte */
+header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+/* Bloc contenant le texte d'accueil à gauche */
+header .left {
+    position: relative;
+    z-index: 2; /* Aligne le texte au-dessus de la couche sombre */
+    color: #ffffff;
+    transform: translateY(-150px); /* Aligne ou remonte le bloc de texte */
+}
+
+/* Conteneur principal centré */
 .container {
     max-width: 1080px;
     margin: auto;
-    padding: 0 20px; /* AJOUT : Empêche le contenu de coller aux bords sur mobile */
+    padding: 0 20px; /* Évite que le contenu colle aux bords de l'écran */
 }
 
+/* Système de flexion (Flexbox) pour aligner les éléments en ligne */
 .row {
     display: flex;
     flex-wrap: wrap;
 }
 
 .justify-content-between {
-    justify-content: space-between;
+    justify-content: space-between; /* Espace les éléments aux extrémités */
 }
 
 .align-items-center {
-    align-items: center;
+    align-items: center; /* Centre verticalement */
 }
 
+/* Force la section à faire 100% de la hauteur de l'écran */
 .full-screen {
     min-height: 100vh;
     padding: 80px 0 0;
@@ -115,26 +130,94 @@ ul {
     text-align: center;
 }
 
-
-
-/* =========================================
-   MEDIA QUERIES (RESPONSIVE DESIGN)
-   ========================================= */
-
-/* Pour les tablettes et petits écrans (max 992px) */
-@media screen and (max-width: 992px) {
-   
+/* ==========================================================================
+   COMPOSANTS : BOUTONS
+   ========================================================================== */
+/* Conteneur des boutons sous le titre */
+.hero-buttons {
+    display: flex;
+    gap: 25px;       /* Espace entre les deux boutons */
+    margin-top: 40px; /* Écartement avec le texte du dessus */
+    flex-wrap: wrap;
 }
 
-/* Pour les mobiles (max 768px) */
+/* Style de base commun à tous les boutons */
+.btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 230px;
+    height: 70px;
+    padding: 0 35px;
+    border-radius: 40px; /* Bords très arrondis (style pilule) */
+    font-size: 50px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease; /* Animation fluide au survol */
+}
+
+/* Bouton bleu uni (Mes Projets) */
+.btn-primary {
+    background: var(--mainColor);
+    color: var(--black);
+    border: 2px solid var(--mainColor);
+}
+
+/* Bouton transparent avec bordure blanche (À propos de moi) */
+.btn-outline {
+    background: transparent;
+    color: var(--whiteSmoke);
+    border: 2px solid var(--whiteSmoke);
+}
+
+/* Effets au survol des boutons (Hover) */
+.btn-primary:hover {
+    transform: translateY(-3px); /* Légère impulsion vers le haut */
+    box-shadow: var(--shadow);   /* Apparition de l'ombre */
+}
+
+.btn-outline:hover {
+    background: var(--whiteSmoke); /* Devient blanc opaque */
+    color: var(--black);
+    transform: translateY(-3px);
+}
+
+header .left {
+    position: relative;
+    z-index: 2;
+    color: #ffffff;
+    transform: translateY(-80px); /* Passe de -150px à -100px ou -50px pour redescendre tout le bloc */
+}
+
+/* ==========================================================================
+   MEDIA QUERIES (RESPONSIVE DESIGN POUR MOBILES ET TABLETTES)
+   ========================================================================== */
+
+/* Écrans de taille intermédiaire (Tablettes - max 992px) */
+@media screen and (max-width: 992px) {
+   /* Zone prête pour des ajustements tablettes si besoin */
+}
+
+/* Smartphones (Écrans de moins de 768px) */
 @media screen and (max-width: 768px) {
     .full-screen {
-        padding: 60px 0 0; /* Réduit un peu l'espacement en haut sur mobile */
+        padding: 60px 0 0; /* Réduit l'espace du haut sur mobile */
     }
 
+    /* Centre les boutons et réduit l'écartement */
+    .hero-buttons {
+        justify-content: center;
+        gap: 15px;
+    }
 
+    /* Adapte la taille des boutons pour qu'ils s'empilent proprement sur mobile */
+    .btn {
+        width: 100%;
+        max-width: 280px;
+        height: 60px;
+        font-size: 16px;
+    }
 }
-
 
 
 
@@ -276,17 +359,6 @@ ul {
         margin-top: 50px;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 /* ===== Presentation ===== */
 :root {
@@ -462,40 +534,6 @@ main {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* ===== Presentation ===== */
-:root {
-    --blueBg: rgb(88, 199, 246);
-    /* Bleu principal */
-    --blueLight: #8cc3ee;
-    /* Bleu secondaire */
-    --textWhite: #ffffff;
-    --textSoft: #000000;
-}
-
-/* ===== MAIN ===== */
-main {
-    background-color: var(--black);
-    min-height: 100px;
-    padding: 80px 20px;
-    font-family: 'Higuen', serif;
-}
 
 /* ===== SECTION PRESENTATION ===== */
 .presentation {
@@ -706,7 +744,7 @@ main {
 }
 
 .popup-content .thanks{
-    font-weight: 800;
+    font-weight: 600;
     color: var(--mainColor);
 }
 
@@ -1020,4 +1058,3 @@ main {
         transform: translateY(0);
     }
 }
-

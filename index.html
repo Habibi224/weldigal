@@ -10,12 +10,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/material-icons@1.13.12/iconfont/material-icons.min.css">
 </head>
 
-
-
 <body>
+
     <header>
-
-
         <section>
             <div class="container">
                 <div class="row full-screen align-items-center">
@@ -27,14 +24,28 @@
                             <span><br>Bienvenue dans mon portfolio</span>
                         </h2>
                         <h2>Étudiant en 3ᵉ année de BUT Génie Électrique et Informatique Industrielle (GEII)</h2>
+
+                        <div class="hero-buttons">
+                            <a href="#projets" class="btn btn-primary">MES PROJETS</a>
+                            <a href="#apropos" class="btn btn-outline">À PROPOS DE MOI</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
     </header>
+
+
+
+
+
+
+    
+
     <main>
         <!-- SECTION PRÉSENTATION -->
-        <section class="presentation">
+        <section class="presentation" id="apropos">
+
             <h2 class="title">Présentation</h2>
 
             <div class="bloc">
@@ -124,28 +135,30 @@
 
 
         <div id="portfolio-popup" class="popup hidden">
-    <div class="popup-content">
+            <div class="popup-content">
 
-        <h2>🚧 Portfolio en cours de conception</h2>
+                <h2>🚧 Portfolio en cours de conception</h2>
 
-        <p>
-            Ce portfolio est actuellement en cours de construction et sera enrichi progressivement
-        </p>
+                <p>
+                    Ce portfolio est actuellement en cours de construction et sera enrichi progressivement
+                </p>
 
-        <p>
-            Vos retours sont les bienvenus ! N'hésitez pas à me faire part de vos suggestions, à me poser des questions
-            sur mon parcours ou mes réalisations, ou à me signaler toute amélioration qui pourrait rendre ce portfolio
-            plus clair et plus agréable à consulter.
-        </p>
+                <p>
+                    Vos retours sont les bienvenus ! N'hésitez pas à me faire part de vos suggestions, à me poser des
+                    questions
+                    sur mon parcours ou mes réalisations, ou à me signaler toute amélioration qui pourrait rendre ce
+                    portfolio
+                    plus clair et plus agréable à consulter.
+                </p>
 
-        <p class="thanks">
-            Merci pour votre visite et votre contribution !
-        </p>
+                <p class="thanks">
+                    Merci pour votre visite et votre contribution !
+                </p>
 
-        <button onclick="closePopup()">Fermer</button>
+                <button onclick="closePopup()">Fermer</button>
 
-    </div>
-</div>
+            </div>
+        </div>
 
         <!-- SECTION PRÉSENTATION de mon parcours de formation-->
 
@@ -204,12 +217,9 @@
                     relier l'électronique, les systèmes embarqués et le logiciel.<br>
                 </p>
 
-
             </div>
 
             <br><br><br>
-
-
             <div class="bloc">
                 <h3>Lycée Ségélais de Banjul (LSB) en Gambie</h3>
                 <h4>Baccalauréat Scientifique (S2) - Série Sciences Expérimentales</h4><br>
@@ -219,103 +229,124 @@
                     qu'une méthode de résolution de problèmes qui constituent aujourd'hui les bases de mon parcours en
                     ingénierie.<br>
                 </p>
+            </div>
+        </section>
+
+        <!-- SECTION PRÉSENTATION de mon parcours de formation-->
+
+        <section class="presentation_geii" id="projets">
+            <h2 class="title">Présentation de mes projets académiques</h2>
+            <br>
+            <div class="bloc">
+                <div class="projects-grid">
+                    <!-- Projet -->
+                    <a href="but3/SAE5/index.html" class="project-card">
+                        <div class="project-image" style="background-image: url('but3/SAE5/image/ESP32-Timer2.jpg');">
+                        </div>
+
+                        <div class="project-content">
+                            <span class="project-year"></span>
+                            <h3>ESP32 Smart Timing (IOT)</h3>
+                        </div>
+                    </a>
+
+                    <!-- Projet -->
+                    <a href="but3/SAE6/index.html" class="project-card">
+                        <div class="project-image" style="background-image: url('but3/SAE6/image/web.png');">
+                        </div>
+
+                        <div class="project-content">
+                            <span class="project-year"></span>
+                            <h3>Générateur de signaux numériques</h3>
+                        </div>
+                    </a>
+                </div>
+
 
             </div>
 
-        </section>
+            <br><br><br>
 
 
-        <section class="projects-section">
 
-            <h2 class="title">Mes projets et expériences professionnelles</h2>
+            <div class="bloc">
+                <div class="projects-grid">
 
-            <div class="projects-grid">
+                    <!-- Projet -->
+                    <a href="but2/SAE4/index_SAE4.html" class="project-card">
+                        <div class="project-image"
+                            style="background-image: url('but2/SAE4/image/061340515920-web-tete.jpg');">
+                        </div>
 
-                <!-- Projet -->
-                <a href="but3/SAE5/index.html" class="project-card">
-                    <div class="project-image" style="background-image: url('but3/SAE5/image/ESP32-Timer2.jpg');">
-                    </div>
+                        <div class="project-content">
+                            <span class="project-year"></span>
+                            <h3>𝐂𝐚𝐩𝐭𝐞𝐮𝐫 𝐜𝐚𝐫𝐝𝐢𝐚𝐪𝐮𝐞 </h3>
+                        </div>
+                    </a>
 
-                    <div class="project-content">
-                        <span class="project-year"></span>
-                        <h3>ESP32 Smart Timing (IOT)</h3>
-                    </div>
-                </a>
+                    <!-- Projet -->
+                    <a href="but2/SAE3/index.html" class="project-card">
+                        <div class="project-image" style="background-image: url('images/styloV.png');">
+                        </div>
 
-                <!-- Projet -->
-                <a href="but3/SAE6/index.html" class="project-card">
-                    <div class="project-image" style="background-image: url('but3/SAE6/image/web.png');">
-                    </div>
+                        <div class="project-content">
+                            <span class="project-year"></span>
+                            <h3>Stylo voltmètre (STM32)</h3>
+                        </div>
+                    </a>
+                </div>
+            </div>
 
-                    <div class="project-content">
-                        <span class="project-year"></span>
-                        <h3>Générateur de signaux numériques</h3>
-                    </div>
-                </a>
+            <br><br><br>
 
-                <!-- Projet -->
-                <a href="but2/SAE4/index_SAE4.html" class="project-card">
-                    <div class="project-image" style="background-image: url('photo/rythme.jpg');">
-                    </div>
 
-                    <div class="project-content">
-                        <span class="project-year"></span>
-                        <h3>Cardiofréquentiomètre</h3>
-                    </div>
-                </a>
+            <div class="bloc">
+                <div class="projects-grid">
 
-                <!-- Projet -->
-                <a href="but2/SAE3/index.html" class="project-card">
-                    <div class="project-image" style="background-image: url('images/styloV.png');">
-                    </div>
 
-                    <div class="project-content">
-                        <span class="project-year"></span>
-                        <h3>Stylo voltmètre (STM32)</h3>
-                    </div>
-                </a>
-                <!-- Projet -->
-                <a href="but1/SAE3_robot/index.html" class="project-card">
+                    <!-- Projet -->
+                    <a href="but1/SAE3_robot/index.html" class="project-card">
 
-                    <div class="project-image">
-                        <video autoplay muted loop playsinline>
-                            <source src="but1/SAE3_robot/image/robot.mp4" type="video/mp4">
-                        </video>
-                    </div>
+                        <div class="project-image">
+                            <video autoplay muted loop playsinline>
+                                <source src="but1/SAE3_robot/image/robot.mp4" type="video/mp4">
+                            </video>
+                        </div>
 
-                    <div class="project-content">
-                        <span class="project-year"></span>
-                        <h3>Robot suiveur de ligne</h3>
-                    </div>
+                        <div class="project-content">
+                            <span class="project-year"></span>
+                            <h3>Robot suiveur de ligne</h3>
+                        </div>
 
-                </a>
+                    </a>
 
-                <!-- Projet -->
-                <a href="but1/SAE1_con/index.html" class="project-card">
-                    <div class="project-image" style="background-image: url('but1/SAE1_con/image/objectif.jpg');">
-                    </div>
+                    <!-- Projet -->
+                    <a href="but1/SAE1_con/index.html" class="project-card">
+                        <div class="project-image"
+                            style="background-image: url('but1/SAE1_con/image/feature-pcb.png');">
+                        </div>
 
-                    <div class="project-content">
-                        <span class="project-year"></span>
-                        <h3>Conception d'un sonomètre (KiCad)</h3>
-                    </div>
-                </a>
+                        <div class="project-content">
+                            <span class="project-year"></span>
+                            <h3>Conception d'un sonomètre (KiCad)</h3>
+                        </div>
+                    </a>
 
-                <!-- Projet -->
-                <a href="but1/index.html" class="project-card">
-                    <div class="project-image" style="background-image: url('photo/photo1.jpg');">
-                    </div>
+                    <!-- Projet -->
+                    <a href="but1/SAE1_verifier/index.html" class="project-card">
+                        <div class="project-image" style="background-image: url('but1/SAE1_verifier/banc.png');">
+                        </div>
 
-                    <div class="project-content">
-                        <span class="project-year"></span>
-                        <h3>Banc de test électronique d'un moteur</h3>
-                    </div>
-                </a>
+                        <div class="project-content">
+                            <span class="project-year"></span>
+                            <h3>Banc de test électronique d'un moteur</h3>
+                        </div>
+                    </a>
 
+                </div>
             </div>
 
         </section>
-
 
 
 
