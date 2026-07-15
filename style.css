@@ -91,19 +91,12 @@ header::before {
     z-index: 1;
 }
 
-/* Bloc contenant le texte d'accueil à gauche */
-header .left {
-    position: relative;
-    z-index: 2; /* Aligne le texte au-dessus de la couche sombre */
-    color: #ffffff;
-    transform: translateY(-150px); /* Aligne ou remonte le bloc de texte */
-}
 
 /* Conteneur principal centré */
 .container {
     max-width: 1080px;
     margin: auto;
-    padding: 0 20px; /* Évite que le contenu colle aux bords de l'écran */
+    padding: 0 1px; /* Évite que le contenu colle aux bords de l'écran */
 }
 
 /* Système de flexion (Flexbox) pour aligner les éléments en ligne */
@@ -136,8 +129,7 @@ header .left {
 /* Conteneur des boutons sous le titre */
 .hero-buttons {
     display: flex;
-    gap: 25px;       /* Espace entre les deux boutons */
-    margin-top: 40px; /* Écartement avec le texte du dessus */
+    margin-top: 25px; /* Écartement avec le texte du dessus */
     flex-wrap: wrap;
 }
 
@@ -147,13 +139,13 @@ header .left {
     justify-content: center;
     align-items: center;
     min-width: 230px;
-    height: 70px;
+    height: 100px;
     padding: 0 35px;
     border-radius: 40px; /* Bords très arrondis (style pilule) */
-    font-size: 50px;
+    font-size: 70px;
     font-weight: bold;
-    letter-spacing: 0.5px;
-    transition: all 0.3s ease; /* Animation fluide au survol */
+    transform: scale(0.5); /* bouton 15% plus grand au repos */
+
 }
 
 /* Bouton bleu uni (Mes Projets) */
@@ -170,14 +162,8 @@ header .left {
     border: 2px solid var(--whiteSmoke);
 }
 
-/* Effets au survol des boutons (Hover) */
-.btn-primary:hover {
-    transform: translateY(-3px); /* Légère impulsion vers le haut */
-    box-shadow: var(--shadow);   /* Apparition de l'ombre */
-}
 
 .btn-outline:hover {
-    background: var(--whiteSmoke); /* Devient blanc opaque */
     color: var(--black);
     transform: translateY(-3px);
 }
@@ -188,6 +174,62 @@ header .left {
     color: #ffffff;
     transform: translateY(-80px); /* Passe de -150px à -100px ou -50px pour redescendre tout le bloc */
 }
+
+/* Barre de navigation fixe pleine largeur */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 50px;
+
+    padding: 20px 0;
+
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+
+    z-index: 1000;
+}
+
+
+/* Style des liens */
+.navbar a {
+    color: var(--whiteSmoke);
+    text-decoration: none;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    transition: 0.3s ease;
+}
+
+
+/* Effet au survol */
+.navbar a:hover {
+    color: var(--mainColor);
+    transform: translateY(-3px);
+}
+
+
+/* Adaptation pour les écrans mobiles */
+@media screen and (max-width: 768px) {
+
+    .navbar {
+        gap: 15px;
+        padding: 15px 10px;
+        flex-wrap: wrap;
+    }
+
+    .navbar a {
+        font-size: 14px;
+    }
+}
+
 
 /* ==========================================================================
    MEDIA QUERIES (RESPONSIVE DESIGN POUR MOBILES ET TABLETTES)
@@ -256,60 +298,12 @@ header .left {
     margin-bottom: 10px;
 }
 
-/* Partie — Boutons BUT1, BUT2, BUT3 */
-.button-container {
-    display: flex;
-    justify-content: center;
-    gap: 30px; /* espace entre les boutons */
-    margin: 50px 0;
-    background-color: white;
-}
 
-.button {
-    font-family: Georgia, 'Times New Roman', Times, serif;
-    font-size: 34px; /* texte plus lisible */
-    padding: 20px 50px; /* taille du bouton proportionnelle */
-    border: 3px solid var(--mainColor); 
-    border-radius: 50px;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: var(--black);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative; 
-    overflow: hidden;
-}
 
-/* Effet hover général */
-.button:hover {
-    color: white;
-    background: linear-gradient(90deg, rgb(88, 199, 246), rgb(88, 199, 246), rgb(88, 199, 246));
-    transform: translateY(-3px); 
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
 
-/* Spécifique pour BUT1, BUT2, BUT3 (coquille corrigée ici) */
-.button-but1,
-.button-but2,
-.button-but3 {
-    border-color: rgb(88, 199, 246);
-}
 
-/* Hover effets spécifiques */
-.button-but1:hover,
-.button-but2:hover,
-.button-but3:hover {
-    font-weight: bold; 
-}
 
-/* Conteneur des boutons dans la section parcours */
-.parcours-buttons {
-    display: flex;
-    gap: 1.5rem;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    margin-top: 100px; 
-}
+
 
 /* =========================================
    MEDIA QUERIES (RESPONSIVE DESIGN)
@@ -445,58 +439,6 @@ main {
 
 
 
-
-
-/* =========================================
-   MEDIA QUERIES (RESPONSIVE DESIGN)
-   ========================================= */
-
-/* Écrans moyens (Petits ordinateurs, tablettes en paysage) */
-@media (max-width: 1200px) {
-    .schema_text.ESE,
-    .schema_text.EME {
-        /* On resserre les boîtes vers le centre pour éviter qu'elles sortent de l'écran */
-        left: -30px;
-        right: -30px;
-        width: 450px; 
-    }
-}
-
-/* Tablettes et basculement du schéma en colonne */
-@media (max-width: 900px) {
-    .schema_png {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        min-height: auto;
-        align-items: center; /* Centre tous les éléments de la flexbox */
-    }
-
-    .schema_text {
-        position: static; /* Annule la position absolue */
-        width: 100%;
-        transform: none; /* Annule les translations */
-        text-align: left;
-    }
-
-    /* On réinitialise les valeurs absolues pour éviter des conflits */
-    .schema_text.ESE,
-    .schema_text.EME,
-    .schema_text.AII {
-        left: auto;
-        right: auto;
-        top: auto;
-        bottom: auto;
-    }
-
-    .schema_text.AII {
-        text-align: left; /* On aligne le texte comme les autres pour la cohérence */
-    }
-
-    .schema_png img {
-        margin: 20px auto;
-    }
-}
 
 /* Mobiles (max 768px) */
 @media (max-width: 768px) {
