@@ -1,5 +1,5 @@
 const reveals = document.querySelectorAll(
-    ".presentation, .presentation_geii, .bloc, .bloc_geii, .schema_text, .box-contact"
+    ".presentation, .presentation_parcours_academique, .bloc, .bloc_geii, .schema_text, .box-contact"
 );
 
 function revealOnScroll() {
