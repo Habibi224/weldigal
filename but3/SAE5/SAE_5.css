@@ -1,0 +1,474 @@
+/* ==========================================================================
+   IMPORT DES POLICES
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Marathi:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
+@font-face {
+    font-family: 'Higuen';
+    src: url('style/Higuen-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+
+/* ==========================================================================
+   VARIABLES DE COULEURS ET THÈMES
+   ========================================================================== */
+:root {
+    --mainColor: rgb(88, 199, 246);
+    --white: #000000;              /* Note : inversé selon ton code original */
+    --black: rgb(255, 255, 255);   /* Note : inversé selon ton code original */
+    --whiteSmoke: #ffffff;
+    --shadow: 0px 4px 4px 0 rgba(21, 21, 21, .2);
+    
+    --blueBg: rgb(88, 199, 246);
+    --blueLight: #8cc3ee;
+    --textWhite: #ffffff;
+    --textSoft: #000000;
+}
+
+/* ==========================================================================
+   RÈGLES DE BASE / RÉINITIALISATION
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+::before,
+::after {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Higuen', serif;    
+    font-size: 16px;
+    letter-spacing: 1px;
+    font-weight: normal;
+    background-color: var(--black);
+}
+
+/* ==========================================================================
+   TYPOGRAPHIE (TITRES ET TEXTES)
+   ========================================================================== */
+h2 {
+    color: #ffffff;
+}
+
+a {
+    text-decoration: none;
+    color: #003cff;
+    font-weight: bold;
+}
+
+ul {
+    list-style: none;
+}
+
+/* ==========================================================================
+   STRUCTURE ET MISE EN PAGE (LAYOUT)
+   ========================================================================== */
+header {
+    position: relative;
+    min-height: 50vh;
+    background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("photo/pic2.jpeg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+.container {
+    max-width: 1080px;
+    margin: auto;
+    padding: 0 1px;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.full-screen {
+    min-height: 60vh;
+    padding: 200px 0 0;
+}
+
+/* ==========================================================================
+   HEADER CONTENU (HÉRO)
+   ========================================================================== */
+header .left {
+    position: relative;
+    z-index: 2;
+    color: #ffffff;
+    transform: translateY(-80px);
+}
+
+.left {
+    flex: 1 0 100%; 
+    max-width: 100%; 
+    padding: 2px;
+}
+
+.left .line {
+    width: 15%;
+    height: 20px;
+    background-color: var(--mainColor);
+    display: inline-block;
+}
+
+.left h2 {
+    margin-top: 25px;
+    font-size: 50px;
+    color: var(--black);
+    line-height: 55px;
+}
+
+.left h2 span {
+    color: var(--mainColor);
+    font-size: 52px;
+}
+
+.left p {
+    color: var(--whiteSmoke);
+    font-size: 16px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+/* ==========================================================================
+   NAVIGATION
+   ========================================================================== */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+    padding: 20px 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+}
+
+.navbar a {
+    color: var(--whiteSmoke);
+    font-size: 18px;
+    font-weight: bold;
+    transition: 0.3s ease;
+}
+
+.navbar a:hover {
+    color: var(--mainColor);
+    transform: translateY(-3px);
+}
+
+/* ==========================================================================
+   MAIN ET SECTIONS
+   ========================================================================== */
+main {
+    background-color: var(--black);
+    min-height: 100px;
+    padding: 80px 20px;
+}
+
+.presentation,
+.taches,
+.objectif,
+.contact-section {
+    max-width: 1400px;
+    margin: auto;
+    padding: 20px 20px;
+}
+
+.presentation h2,
+.taches h2,
+.objectif h2,
+.contact-section h2 {
+    font-size: 40px;
+    color: var(--mainColor);
+    margin-bottom: 40px;
+}
+
+.presentation h3,
+.taches h3,
+.objectif h3,
+.contact-section h3 {
+    font-size: 28px;
+    color: #58c7f6;
+    margin-bottom: 15px;
+}
+
+.presentation h2::after,
+.taches h2::after,
+.objectif h2::after,
+.contact-section h2::after {
+    content: "";
+    width: 80px;
+    height: 4px;
+    background-color: #58c7f6;
+    display: block;
+    margin-top: 10px;
+    border-radius: 2px;
+}
+
+.presentation p,
+.objectif p,
+.taches p,
+.contact-section p {
+    font-size: 20px;
+    line-height: 1.7;
+    color: var(--textSoft);
+    text-align: justify;
+    hyphens: auto;
+    margin-bottom: 20px;
+}
+
+/* ==========================================================================
+   BLOCS DE CONTENU ET LISTES
+   ========================================================================== */
+.bloc {
+    position: relative;
+    padding-left: 30px;
+    margin-left: 40px;
+    margin-bottom: 1px;
+}
+
+.bloc::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 100%;
+    background-color: #58c7f6;
+    border-radius: 2px;
+}
+
+.bloc ul li {
+    font-size: 20px;
+    line-height: 1.7;
+    color: var(--textSoft);
+    margin-bottom: 10px;
+    list-style-type: disc;
+    margin-left: 20px;
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+footer {
+    text-align: center;
+    padding: 20px;
+    background-color: var(--black);
+    color: var(--textSoft);
+}
+
+/* ==========================================================================
+   MEDIA QUERIES (RESPONSIVE)
+   ========================================================================== */
+@media screen and (max-width: 992px) {
+    .left {
+        text-align: center; 
+    }
+    .left .line { margin: 0 auto; }
+}
+
+@media screen and (max-width: 768px) {
+    .navbar { gap: 15px; padding: 15px 10px; flex-wrap: wrap; }
+    .navbar a { font-size: 14px; }
+    .full-screen { padding: 60px 0 0; }
+    
+    .left h2 { font-size: 35px; line-height: 40px; }
+    .left h2 span { font-size: 38px; }
+    
+    main { padding: 40px 15px; }
+    .presentation, .objectif, .taches, .contact-section { padding: 20px 10px; }
+    .presentation h2, .objectif h2, .taches h2 { font-size: 30px; }
+    .presentation h3, .objectif h3, .taches h3 { font-size: 22px; }
+    
+    .presentation p, .objectif p, .taches p { 
+        font-size: 16px; 
+        text-align: left; 
+    }
+    
+    .bloc { margin-left: 10px; padding-left: 15px; }
+    .bloc ul li { font-size: 16px; }
+}
+
+
+
+
+/* ==========================================================================
+   TABLEAU COMPARATIF
+   ========================================================================== */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto; /* Permet de scroller le tableau de gauche à droite sur téléphone */
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5); 
+}
+
+.custom-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px; /* Empêche le texte de s'écraser, force le scroll sur petit écran */
+    background-color: #111111; /* Fond très sombre pour contraster avec le body noir */
+    color: var(--whiteSmoke);
+}
+
+.custom-table th {
+    background-color: var(--mainColor);
+    color: var(--black);
+    padding: 15px;
+    text-align: left;
+    font-weight: bold;
+    font-size: 18px;
+    font-family: inherit;
+}
+
+.custom-table td {
+    padding: 15px;
+    border-bottom: 1px solid #333;
+    font-size: 16px;
+    vertical-align: top; /* Aligne le texte en haut de la cellule */
+    line-height: 1.5;
+}
+
+/* Effet au survol des lignes pour le côté "interactif" */
+.custom-table tbody tr {
+    transition: background-color 0.3s ease;
+}
+
+.custom-table tbody tr:hover {
+    background-color: rgba(88, 199, 246, 0.15); /* Légère surbrillance bleue */
+}
+
+/* ==========================================================================
+   BOUTON DOCUMENT (Verdict)
+   ========================================================================== */
+.btn-doc {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background-color: transparent;
+    color: var(--mainColor);
+    border: 2px solid var(--mainColor);
+    padding: 12px 25px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn-doc:hover {
+    background-color: var(--mainColor);
+    color: var(--black);
+    transform: translateY(-3px); /* Petit effet de soulèvement au clic */
+}
+
+
+
+/* ==========================================================================
+   VIDÉOS de prise en main
+   ========================================================================== */
+.media-container {
+    display: flex;
+    gap: 30px; /* Espace entre les deux vidéos */
+    margin-top: 25px;
+    flex-wrap: wrap; /* Permet aux vidéos de passer à la ligne sur petit écran */
+    justify-content: center;
+}
+
+.media-item {
+    flex: 1; /* Permet aux deux blocs de prendre la même largeur (50/50) */
+    min-width: 300px; /* Sur téléphone, le bloc prendra 100% au lieu d'être écrasé */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; /* Espace entre la vidéo et son bouton de code */
+}
+
+.media-item video {
+    width: 100%;
+    border-radius: 8px; /* Coins arrondis pour faire propre */
+    border: 2px solid var(--mainColor); /* Bordure bleue autour de la vidéo */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* Style pour les images dans les blocs médias */
+.media-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px; /* Coins arrondis */
+    border: 2px solid var(--mainColor); /* Bordure bleue */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4); /* Ombre portée */
+}
+
+/* On réutilise les styles du bouton .btn-doc pour les liens de code */
+.media-item .btn-doc {
+    font-size: 16px;
+    padding: 8px 20px;
+    width: 50%;
+    text-align: center;
+    justify-content: center;
+}
+
+.action-center {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px; /* Crée l'espace au-dessus du bouton */
+}
+
+
+/* ==========================================================================
+   IMAGES CLIQUABLES du interface de supervison
+   ========================================================================== */
+.clickable-media {
+    width: 100%;
+    display: block;
+    cursor: pointer; /* Force le curseur en forme de main */
+    transition: transform 0.3s ease;
+}
+
+.clickable-media:hover {
+    transform: scale(1.03); /* Zoom très léger de 3% au survol */
+}
+
+.clickable-media img {
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Optionnel : illumine la bordure et l'ombre quand on passe la souris dessus */
+.clickable-media:hover img {
+    border-color: #ffffff; 
+    box-shadow: 0 6px 20px rgba(88, 199, 246, 0.4);
+}
+
+.media-single {
+    max-width: 700px;
+    width: 100%;
+    flex: none;      
+    margin: 0 auto;   
+}
